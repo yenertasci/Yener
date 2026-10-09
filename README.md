@@ -1,4 +1,3 @@
-Admin:Yener
+Yener Taşcı
+
 Tasarruf Devri
-index.html
-https://www.youtube.com/@tasarruf-Tr
