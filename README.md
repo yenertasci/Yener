@@ -1,5 +1,1 @@
-Admin.Yener
-
-Yener Taşcı
-
-Tasarruf Devri
+Tasarruf Devri Kendi Kanalım
