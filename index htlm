@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tasarruf Devri - Nostaljik Okey ve Müzik Salonu</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        body {
+            background-color: #1a1a1a;
+            color: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        header {
+            background: #2c2c2c;
+            border-bottom: 3px solid #ffcc00;
+            padding: 15px;
+            text-align: center;
+        }
+        header h1 {
+            color: #ffcc00;
+            font-size: 24px;
+            letter-spacing: 2px;
+        }
+        .main-container {
+            display: flex;
+            flex: 1;
+            padding: 20px;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        /* Okey Salonu Alanı */
+        .okey-salon {
+            flex: 2;
+            background: #1e3f20; /* Yeşil Çuha Rengi */
+            border: 4px solid #4a2e18; /* Ahşap Çerçeve */
+            border-radius: 8px;
+            padding: 20px;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .salon-header {
+            font-size: 18px;
+            font-weight: bold;
+            color: #ffcc00;
+            border-bottom: 1px dashed #ffcc00;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        .masalar-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+        }
+        .masa-card {
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid #8B4513;
+            border-radius: 6px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .masa-card:hover {
+            background: rgba(0, 0, 0, 0.6);
+            border-color: #ffcc00;
+        }
+        .masa-card h3 {
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: #fff;
+        }
+        .masa-card p {
+            font-size: 12px;
+            color: #ccc;
+        }
+        /* Winamp / Yan Panel */
+        .side-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            min-width: 280px;
+        }
+        .winamp-box {
+            background: #222;
+            border: 2px solid #555;
+            border-radius: 4px;
+            padding: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        .winamp-title {
+            background: linear-gradient(90deg, #000080, #101040);
+            color: #00ff00;
+            padding: 5px 10px;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .player-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .btn {
+            background: #444;
+            color: #fff;
+            border: 1px solid #777;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .btn:hover {
+            background: #555;
+            border-color: #ffcc00;
+        }
+        footer {
+            background: #111;
+            text-align: center;
+            padding: 10px;
+            font-size: 12px;
+            color: #777;
+            border-top: 1px solid #333;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>TASARRUF DEVRİ - NOSTALJİ DURAĞI</h1>
+    </header>
+
+    <div class="main-container">
+        <!-- Okey Salonu Bölümü -->
+        <div class="okey-salon">
+            <div>
+                <div class="salon-header">🀄 KIRAATHANE OKEY SALONU - MASALAR</div>
+                <div class="masalar-grid">
+                    <div class="masa-card" onclick="alert('1 Nolu Masaya oturuluyor...')">
+                        <h3>Masa 1</h3>
+                        <p>3 / 4 Oyuncu</p>
+                        <p style="color:#00ff00; margin-top:5px;">[ Boş Yer Var ]</p>
+                    </div>
+                    <div class="masa-card" onclick="alert('2 Nolu Masaya oturuluyor...')">
+                        <h3>Masa 2</h3>
+                        <p>4 / 4 Oyuncu</p>
+                        <p style="color:#ff5555; margin-top:5px;">[ Dolu ]</p>
+                    </div>
+                    <div class="masa-card" onclick="alert('3 Nolu Masaya oturuluyor...')">
+                        <h3>Masa 3</h3>
+                        <p>1 / 4 Oyuncu</p>
+                        <p style="color:#00ff00; margin-top:5px;">[ Boş Yer Var ]</p>
+                    </div>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="btn" style="padding: 10px 20px; background: #8B4513; border-color: #ffcc00; font-weight: bold;" onclick="alert('Yeni masa açma ekranı hazırlanıyor!')">+ Hemen Yeni Masa Kur</button>
+            </div>
+        </div>
+
+        <!-- Sağ Taraf: Winamp ve İstek Paneli -->
+        <div class="side-panel">
+            <!-- Winamp Oynatıcı -->
+            <div class="winamp-box">
+                <div class="winamp-title">
+                    <span>WINAMP v2.91</span>
+                    <span>♫</span>
+                </div>
+                <div style="background: #000; color: #00ff00; padding: 10px; font-size: 13px; border: 1px inset #444;">
+                    01. Mslm Gürses - Affet (Nostalji Mix)<br>
+                    <span style="font-size: 11px; color: #888;">[ 02:45 / 04:12 ] - 128kbps</span>
+                </div>
+                <div class="player-controls">
+                    <button class="btn">⏮ Önceki</button>
+                    <button class="btn" onclick="alert('Müzik Çalıyor / Durduruldu')">▶ / ⏸ Başlat</button>
+                    <button class="btn">⏭ Sonraki</button>
+                </div>
+            </div>
+
+            <!-- İstek Paneli -->
+            <div class="winamp-box">
+                <div class="winamp-title" style="background: linear-gradient(90deg, #8b0000, #401010);">
+                    <span>İSTEK & SOHBET</span>
+                </div>
+                <div style="font-size: 12px; color: #ccc; margin-bottom: 8px;">
+                    Masalara veya DJ'e mesaj gönder:
+                </div>
+                <input type="text" placeholder="Mesajınızı yazın..." style="width: 100%; padding: 6px; background: #111; border: 1px solid #444; color: #fff; margin-bottom: 8px; font-family: inherit;">
+                <button class="btn" style="width: 100%;">Gönder</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2026 tasarrufdevri.com - Tüm Hakları Saklıdır. (Sıfır Risk, Maksimum Nostalji)
+    </footer>
+
+</body>
+</html>
