@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tasarruf Devri & Sıfır Atık - Efsane Sanatçılar Arşivi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@300;400;500;600;700;800&display=swap');
+        .font-mono-winamp { font-family: 'Share Tech Mono', monospace; }
+        .winamp-bg { background: linear-gradient(180deg, #2b2b36 0%, #15151e 100%); border: 2px solid #5a5a6e; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .winamp-display { background-color: #0b130b; border: 2px inset #3a4a3a; color: #00ff66; text-shadow: 0 0 5px rgba(0, 255, 102, 0.7); }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans antialiased">
+
+    <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-40 shadow-xl">
+        <div class="max-w-5xl mx-auto px-4 py-3 flex justify-between items-center">
+            <h1 class="text-xs md:text-base font-black text-emerald-400">TASARRUF DEVRİ & SIFIR ATIK</h1>
+            <button onclick="toggleAdminModal()" class="bg-slate-800 text-slate-200 px-3 py-1.5 rounded text-xs font-semibold">
+                <i class="fa-solid fa-user-shield text-emerald-400"></i> Panel
+            </button>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-4 py-6 space-y-8 w-full flex-grow">
+
+        <!-- MOBİL DEV SANATÇILAR WINAMP PLAYER -->
+        <section class="winamp-bg rounded-xl p-4 max-w-md mx-auto shadow-2xl">
+            <div class="flex justify-between items-center border-b border-slate-700 pb-2 mb-3">
+                <span class="text-xs font-bold text-slate-300 font-mono-winamp">WINAMP v2.91 - EFSANE SANATÇILAR</span>
+                <span class="text-xs text-emerald-400 font-mono-winamp font-bold" id="playStateBadge">HAZIR</span>
+            </div>
+            <div class="winamp-display rounded p-3 mb-3 font-mono-winamp flex justify-between items-center">
+                <div class="truncate text-xs font-bold w-3/4" id="trackTitleDisplay">🎵 Sanatçı Seçiniz</div>
+                <div class="text-xs font-bold text-emerald-300" id="timeDisplay">00:00</div>
+            </div>
+            
+            <audio id="audioPlayer" preload="auto" playsinline></audio>
+
+            <div class="flex flex-col gap-2.5">
+                <div class="flex gap-2 items-center">
+                    <button onclick="playAudio()" class="bg-emerald-600 text-slate-950 font-bold px-3 py-2 rounded text-xs flex-1">Oynat</button>
+                    <button onclick="pauseAudio()" class="bg-amber-600 text-slate-950 font-bold px-3 py-2 rounded text-xs">Durdur</button>
+                    <button onclick="toggleMute()" id="muteBtn" class="bg-slate-700 text-white font-bold px-3 py-2 rounded text-xs">Ses</button>
+                </div>
+                <div>
+                    <select id="musicSelect" onchange="changeMusic(this.value, this.options[this.selectedIndex].text)" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-xs text-emerald-400 font-mono-winamp">
+                        <option value="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3">🌊 Volkan Konak - Kuzeyin Oğlu Akustik Esinti</option>
+                        <option value="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3">🎻 Engin Nurşani - Türkü ve Bağlama Ruhu</option>
+                        <option value="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3">📜 İbrahim Sadri - Duygulu Şiir ve Fon Müzikleri</option>
+                        <option value="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3">🌿 Kazım Koyuncu - Karadeniz Hırçın Dalgalar</option>
+                        <option value="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3">🎸 Kıraç - Anadolu Rock & Güçlü Yorum</option>
+                        <option value="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3">🌊 Selçuk Balcı - Kemençe ve Yayla Havaları</option>
+                        <option value="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3">🪕 Neşet Ertaş - Bozlak ve Gönül Dağı Melodisi</option>
+                        <option value="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3">🥀 Müslüm Gürses - Damar Arabesk & Akustik</option>
+                        <option value="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3">🌙 Ahmet Kaya - Özgün Protest Akustik Arşiv</option>
+                        <option value="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3">🌍 Barış Manço - Anadolu Pop & Nostalji</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <!-- DEFTER AKIŞI -->
+        <div id="defterAkisi" class="space-y-8"></div>
+
+    </main>
+
+    <!-- ADMIN MODAL -->
+    <div id="adminModal" class="fixed inset-0 bg-slate-950/80 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-700 rounded-xl max-w-sm w-full p-5 space-y-3">
+            <h3 class="font-bold text-white text-xs">Yener & Oktay Yönetici Girişi</h3>
+            <input type="text" id="adminUser" placeholder="Kullanıcı adı" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-xs text-white">
+            <input type="password" id="adminPass" placeholder="Şifre (123456)" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-xs text-white">
+            <div class="flex justify-end gap-2">
+                <button onclick="toggleAdminModal()" class="bg-slate-800 text-slate-300 px-3 py-1 rounded text-xs">İptal</button>
+                <button onclick="loginAdmin()" class="bg-emerald-600 text-slate-950 px-3 py-1 rounded text-xs font-bold">Giriş</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const initialCatalog = [
+            { titleTr: "Rüzgar Enerjisi & Yenilenebilir Türbinler", titleEn: "Wind Energy & Turbines", cat: "Enerji / 2018", img: "https://images.unsplash.com/photo-1466611653911-95081537e5b7?auto=format&fit=crop&w=800&q=80", descTr: "Kuruluş Yılı: 2018. Amacı: Yerli rüzgar gücünü entegre etmek. Gerekçe: Fosil yakıt bağımlılığını bitirmek. Yapan: Enerji Bakanlığı. Kazanım: Yıllık milyarlarca dolar tasarruf.", descEn: "Established 2018. Integrates domestic wind power." },
+            { titleTr: "Elektrik Altyapısı & Akıllı Şebekeler", titleEn: "Smart Grids", cat: "Şebeke / 2019", img: "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=800&q=80", descTr: "Kuruluş Yılı: 2019. Amacı: Kayıp kaçakları önlemek. Gerekçe: Eski hatlar. Yapan: TEİAŞ. Kazanım: %15 enerji verimliliği.", descEn: "Established 2019. Minimizes losses." },
+            { titleTr: "Güneş Enerjisi Santralleri (GES)", titleEn: "Solar Plants", cat: "Enerji / 2020", img: "https://images.unsplash.com/photo-1509391365360-2e959784a276?auto=format&fit=crop&w=800&q=80", descTr: "Kuruluş Yılı: 2020. Amacı: Tarım ve sanayide güneş enerjisi. Kazanım: Sıfır karbon.", descEn: "Established 2020. Zero carbon footprint." },
+            { titleTr: "Doğal Gaz & Tüp Dönüşüm Verimliliği", titleEn: "Natural Gas Efficiency", cat: "Dönüşüm / 2017", img: "https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=800&q=80", descTr: "Kuruluş Yılı: 2017. Amacı: Yoğuşmalı kombi sistemi. Kazanım: %25 yakıt tasarrufu.", descEn: "Established 2017. 25% fuel savings." },
+            { titleTr: "Yağmur Suyu Hasadı & Akıllı Sulama", titleEn: "Rainwater Harvesting", cat: "Su / 2021", img: "https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?auto=format&fit=crop&w=800&q=80", descTr: "Kuruluş Yılı: 2021. Amacı: Çatı sularını depolama. Kazanım: %40 su tasarrufu.", descEn: "Established 2021. 40% efficiency." },
+            { titleTr: "TOGG & Yerli Elektrikli Araç", titleEn: "TOGG EV", cat: "Ulaşım / 2022", img: "https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=800&q=80", descTr: "Kuruluş Yılı: 2022. Amacı: Sıfır emisyonlu mobilite. Kazanım: Düşük km maliyeti.", descEn: "Established 2022. Zero-emission." },
+            { titleTr: "Sıfır Atık Hareketi & Dönüşüm", titleEn: "Zero Waste", cat: "Çevre / 2017", img: "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&w=800&q=80", descTr: "Kuruluş Yılı: 2017. Amacı: Kaynağında ayrıştırma. Kazanım: Hammadde koruma.", descEn: "Established 2017. Raw material savings." },
+            { titleTr: "Elektrikli Toplu Ulaşım Sistemleri", titleEn: "Electric Transit", cat: "Ulaşım / 2019", img: "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=800&q=80", descTr: "Kuruluş Yılı: 2019. Amacı: Metro ve e-otobüs. Kazanım: Temiz hava.", descEn: "Established 2019. Clean air." },
+            { titleTr: "Dijital Vergi & e-Fatura", titleEn: "Digital Tax", cat: "Maliye / 2018", img: "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=800&q=80", descTr: "Kuruluş Yılı: 2018. Amacı: Kağıtsız maliye. Kazanım: Kağıt tasarrufu.", descEn: "Established 2018. Paperless." },
+            { titleTr: "Yerli Bor Madeni İşleme", titleEn: "Boron Processing", cat: "Maden / 2019", img: "https://images.unsplash.com/photo-1578328819058-b69f3a3b0f6b?auto=format&fit=crop&w=800&q=80", descTr: "Kuruluş Yılı: 2019. Amacı: Uç ürün üretimi. Kazanım: Yüksek katma değer.", descEn: "Established 2019. High added value." },
+            { titleTr: "Milli Sondaj & Karadeniz Gazı", titleEn: "Black Sea Gas", cat: "Enerji / 2020", img: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80", descTr: "Kuruluş Yılı: 2020. Amacı: Denizde kendi sondajımız. Kazanım: Yerli gaz.", descEn: "Established 2020. Domestic gas." },
+            { titleTr: "Kağıtsız Devlet (e-Devlet)", titleEn: "e-Government", cat: "Dijital / 2016", img: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80", descTr: "Kuruluş Yılı: 2016. Amacı: Kamu hizmetleri dijitalde. Kazanım: Zaman tasarrufu.", descEn: "Established 2016. Digital portal." },
+            { titleTr: "Yerli Ödeme Sistemi TROY", titleEn: "TROY", cat: "Finans / 2017", img: "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&w=800&q=80", descTr: "Kuruluş Yılı: 2017. Amacı: Milli kart altyapısı. Kazanım: Komisyonların içeride kalması.", descEn: "Established 2017. Local clearing." },
+            { titleTr: "Gıda İsrafı & Soğuk Zincir", titleEn: "Food Waste Architecture", cat: "Tarım / 2020", img: "https://images.unsplash.com/photo-1610348725531-843dff563e2c?auto=format&fit=crop&w=800&q=80", descTr: "Kuruluş Yılı: 2020. Amacı: Lojistik kayıpları önleme. Kazanım: Gıda arz güvenliği.", descEn: "Established 2020. Food security." },
+            { titleTr: "Şehir Hastaneleri & Medikal Tasarruf", titleEn: "City Hospitals", cat: "Sağlık / 2019", img: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=800&q=80", descTr: "Kuruluş Yılı: 2019. Amacı: Entegre sağlık kampüsleri. Kazanım: Operasyonel tasarruf.", descEn: "Established 2019. Integrated health." },
+            { titleTr: "Akıllı Otoyollar & Zaman Tasarrufu", titleEn: "Smart Highways", cat: "Altyapı / 2021", img: "https://images.unsplash.com/photo-1506521781263-d8422e82f27a?auto=format&fit=crop&w=800&q=80", descTr: "Kuruluş Yılı: 2021. Amacı: Dur-kalk trafiğini azaltma. Kazanım: Yakıt tasarrufu.", descEn: "Established 2021. Time savings." },
+            { titleTr: "Dijital Okullar & Akıllı Tahta", titleEn: "Digital Schools", cat: "Eğitim / 2018", img: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=800&q=80", descTr: "Kuruluş Yılı: 2018. Amacı: Dijital ders içerikleri. Kazanım: Matbaa tasarrufu.", descEn: "Established 2018. Digital textbooks." },
+            { titleTr: "Millet Kütüphaneleri & Dijital Arşiv", titleEn: "National Libraries", cat: "Kültür / 2020", img: "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=800&q=80", descTr: "Kuruluş Yılı: 2020. Amacı: Ücretsiz bilgi erişimi. Kazanım: Kültürel koruma.", descEn: "Established 2020. Free access." }
+        ];
+
+        let catalogData = JSON.parse(localStorage.getItem('tasarruf_catalog')) || initialCatalog;
+
+        function renderDefter() {
+            const container = document.getElementById('defterAkisi');
+            container.innerHTML = '';
+
+            const coverDiv = document.createElement('div');
+            coverDiv.className = "bg-slate-900 border border-emerald-500/40 p-6 rounded-2xl shadow-xl space-y-4 text-center";
+            coverDiv.innerHTML = `
+                <span class="bg-emerald-500 text-slate-950 text-[10px] font-black px-3 py-1 rounded-full uppercase">Resmî Tasarım Defteri</span>
+                <h2 class="text-2xl font-black text-white">TASARRUF DEVRİ & SIFIR ATIK</h2>
+                <p class="text-slate-300 text-xs leading-relaxed">18 stratejik Ar-Ge hamlesi ve sürdürülebilirlik raporları.</p>
+                <div class="pt-3 border-t border-slate-800 text-[11px] text-slate-400">
+                    Sorumlular: <strong class="text-slate-200">Yener & Oktay</strong> | 2026
+                </div>
+            `;
+            container.appendChild(coverDiv);
+
+            catalogData.forEach((item, idx) => {
+                const pageNum = idx + 1;
+                const pageDiv = document.createElement('div');
+                pageDiv.className = "bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-lg";
+                pageDiv.innerHTML = `
+                    <div class="space-y-3">
+                        <img src="${item.img}" alt="${item.titleTr}" class="w-full h-48 object-cover rounded-xl border border-slate-800">
+                        <div class="flex justify-between items-center">
+                            <span class="text-[10px] font-mono text-emerald-400 font-bold">YAPRAK ${pageNum} / 18</span>
+                            <span class="bg-emerald-600/20 text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded border border-emerald-500/30">${item.cat}</span>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div>
+                            <h3 class="text-base font-bold text-white">${item.titleTr}</h3>
+                            <p class="text-slate-300 text-xs leading-relaxed mt-1">${item.descTr}</p>
+                        </div>
+                        <div class="pt-2 border-t border-slate-800">
+                            <h4 class="text-xs font-semibold text-cyan-300">${item.titleEn}</h4>
+                            <p class="text-slate-400 text-xs leading-relaxed mt-1">${item.descEn}</p>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(pageDiv);
+            });
+        }
+
+        const audio = document.getElementById('audioPlayer');
+        let timer = null;
+
+        window.onload = function() {
+            renderDefter();
+            const musicSelect = document.getElementById('musicSelect');
+            audio.src = musicSelect.value;
+            document.getElementById('trackTitleDisplay').innerText = musicSelect.options[0].text;
+        };
+
+        function changeMusic(url, title) {
+            audio.src = url;
+            audio.load();
+            document.getElementById('trackTitleDisplay').innerText = title;
+            playAudio();
+        }
+
+        function playAudio() {
+            audio.play().then(() => {
+                document.getElementById('playStateBadge').innerText = "ÇALIYOR";
+                if (!timer) timer = setInterval(updateTime, 1000);
+            }).catch(e => {
+                alert("Mobil tarayıcı izni için ekrana dokunup 'Oynat' tuşuna basın.");
+            });
+        }
+
+        function pauseAudio() {
+            audio.pause();
+            document.getElementById('playStateBadge').innerText = "DURAKLATILDI";
+        }
+
+        function toggleMute() {
+            audio.muted = !audio.muted;
+            document.getElementById('muteBtn').innerText = audio.muted ? "Aç" : "Ses";
+        }
+
+        function updateTime() {
+            if (!audio.paused) {
+                const c = Math.floor(audio.currentTime);
+                const m = Math.floor(c / 60).toString().padStart(2, '0');
+                const s = (c % 60).toString().padStart(2, '0');
+                document.getElementById('timeDisplay').innerText = `${m}:${s}`;
+            }
+        }
+
+        function toggleAdminModal() { document.getElementById('adminModal').classList.toggle('hidden'); }
+        function loginAdmin() {
+            const u = document.getElementById('adminUser').value.trim().toLowerCase();
+            const p = document.getElementById('adminPass').value.trim();
+            if ((u === "yener" || u === "oktay") && p === "123456") {
+                alert("Giriş Başarılı! Yener & Oktay Paneli Aktif.");
+                toggleAdminModal();
+            } else {
+                alert("Hatalı kullanıcı adı veya şifre!");
+            }
+        }
+    </script>
+</body>
+</html>
