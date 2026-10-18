@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tasarruf Devri & Sıfır Atık - Kapsamlı Defter Arşivi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@300;400;500;600;700;800&display=swap');
+        .font-mono-winamp { font-family: 'Share Tech Mono', monospace; }
+        .winamp-bg { background: linear-gradient(180deg, #2b2b36 0%, #15151e 100%); border: 2px solid #5a5a6e; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .winamp-display { background-color: #0b130b; border: 2px inset #3a4a3a; color: #00ff66; text-shadow: 0 0 5px rgba(0, 255, 102, 0.7); }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans antialiased selection:bg-emerald-500 selection:text-white">
+
+    <!-- ÜST MENÜ -->
+    <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-40 shadow-xl backdrop-blur-md bg-opacity-95">
+        <div class="max-w-5xl mx-auto px-4 py-3.5 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-emerald-600 p-2.5 rounded-xl text-slate-950 font-bold shadow-lg shadow-emerald-950">
+                    <i class="fa-solid fa-book-open text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-sm md:text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-200 to-cyan-400">
+                        TASARRUF DEVRİ & SIFIR ATIK
+                    </h1>
+                    <p class="text-[11px] text-slate-400 font-medium">Uzun Uzadıya Kapsamlı Ar-Ge ve Strateji Defteri</p>
+                </div>
+            </div>
+            <button onclick="toggleAdminModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3.5 py-2 rounded-lg border border-slate-700 text-xs font-semibold flex items-center space-x-2 transition">
+                <i class="fa-solid fa-user-shield text-emerald-400"></i>
+                <span>Yener & Oktay Panel</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-4 py-8 space-y-12 w-full flex-grow">
+
+        <!-- WINAMP RADYO OYNATICISI -->
+        <section class="winamp-bg rounded-xl p-4 max-w-lg mx-auto shadow-2xl">
+            <div class="flex justify-between items-center border-b border-slate-700 pb-2 mb-3">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-tower-broadcast text-emerald-400 animate-pulse"></i>
+                    <span class="text-xs font-bold text-slate-300 font-mono-winamp">WINAMP v2.91 - RADYO & YAYIN</span>
+                </div>
+                <div class="text-xs text-emerald-400 font-mono-winamp font-bold" id="playStateBadge">HAZIR</div>
+            </div>
+            <div class="winamp-display rounded p-3 mb-3 font-mono-winamp flex justify-between items-center">
+                <div class="truncate text-sm font-bold w-3/4" id="trackTitleDisplay">📻 Kanal Seçiniz ve Oynat'a Basınız</div>
+                <div class="text-xs font-bold text-emerald-300" id="timeDisplay">00:00</div>
+            </div>
+
+            <audio id="audioPlayer" preload="auto">
+                <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mp3">
+            </audio>
+
+            <div class="flex flex-col gap-2.5">
+                <div class="flex gap-2 items-center">
+                    <button onclick="playAudio()" class="bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold px-4 py-2 rounded text-xs flex items-center space-x-1 transition flex-1 justify-center">
+                        <i class="fa-solid fa-play"></i><span>Yayını Başlat / Oynat</span>
+                    </button>
+                    <button onclick="pauseAudio()" class="bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold px-4 py-2 rounded text-xs flex items-center space-x-1 transition">
+                        <i class="fa-solid fa-pause"></i><span>Durdur</span>
+                    </button>
+                    <button onclick="toggleMute()" id="muteBtn" class="bg-slate-700 hover:bg-slate-600 text-white font-bold px-3 py-2 rounded text-xs transition">Sesi Kıs</button>
+                </div>
+                <div>
+                    <select id="stationSelect" onchange="changeStation(this.value, this.options[this.selectedIndex].text)" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-xs text-emerald-400 font-mono-winamp focus:outline-none focus:border-emerald-500">
+                        <option value="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3">🎵 Varsayılan Akustik Ar-Ge Müziği</option>
+                        <option value="https://s3.radyotelekom.com/kralfm/playlist.m3u8">📻 Kral FM (İstanbul 92.0 / Ulusal Yayın)</option>
+                        <option value="https://radyo.karadenizfm.com.tr/stream">📻 Karadeniz FM (İstanbul 98.2 / Yöresel Akış)</option>
+                        <option value="https://trt.radyotvonline.net/trtradyohaber/playlist.m3u8">📻 TRT Haber Radyo (Ankara 95.0 / İstanbul 99.6)</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <!-- DEFTER AKIŞI: KAPAK + UZUN UZADIYA 18 SAYFA ALT ALTA -->
+        <div id="defterAkisi" class="space-y-12"></div>
+
+    </main>
+
+    <!-- YÖNETİCİ PANELİ MODAL -->
+    <div id="adminModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <h3 class="font-bold text-white text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-user-gear text-emerald-400"></i> Yener & Oktay Yönetici Girişi
+                </h3>
+                <button onclick="toggleAdminModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div>
+                <label class="block text-xs text-slate-400 mb-1">Kullanıcı Adı</label>
+                <input type="text" id="adminUser" placeholder="yener veya oktay" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+            </div>
+            <div>
+                <label class="block text-xs text-slate-400 mb-1">Şifre</label>
+                <input type="password" id="adminPass" placeholder="123456" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+            </div>
+            <div class="flex justify-end gap-2 pt-2">
+                <button onclick="toggleAdminModal()" class="bg-slate-800 text-slate-300 px-3 py-1.5 rounded text-xs font-semibold">İptal</button>
+                <button onclick="loginAdmin()" class="bg-emerald-600 hover:bg-emerald-500 text-slate-950 px-4 py-1.5 rounded text-xs font-bold">Giriş Yap</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script>
+        const initialCatalog = [
+            {
+                titleTr: "Rüzgar Enerjisi & Yenilenebilir Türbinler",
+                titleEn: "Wind Energy & Renewable Turbines",
+                cat: "Enerji / Kuruluş: 2018",
+                img: "https://images.unsplash.com/photo-1466611653911-95081537e5b7?auto=format&fit=crop&w=1000&q=80",
+                descTr: "<strong>Kuruluş Yılı ve Amacı:</strong> 2018 yılında Enerji ve Tabii Kaynaklar Bakanlığı ile yerli sanayi ortaklığında hayata geçirilmiştir. Temel amacı; ülkenin rüzgar potansiyelini maksimum düzeyde kullanarak elektrik üretiminde dışa bağımlılığı kökten kırmak ve yerli türbin kanadı üretmektir.<br><br><strong>Neden İhtiyaç Duyuldu?:</strong> Fosil yakıt ithalatının cari açık üzerindeki ağır baskısını azaltmak, karbon salınımını durdurmak ve enerji arz güvenliğini yerli kaynaklarla garanti altına almak zorunluluğundan doğmuştur.<br><br><strong>Kim Gerçekleştirdi?:</strong> T.C. Enerji Bakanlığı, YEKA (Yenilenebilir Enerji Kaynak Alanları) projeleri kapsamında yerli ve yabancı teknoloji ortaklıklarıyla inşa etmiştir.<br><br><strong>Bize Neler Kazandıracak?:</strong> Ülkeye yıllık milyarlarca dolarlık doğal gaz ve kömür ithalat tasarrufu sağlayacak, binlerce kişiye istihdam açacak ve gelecek nesillere temiz, nefes alabilir bir doğa bırakacaktır.",
+                descEn: "Established in 2018 to integrate domestic wind power into the national grid, reducing fossil fuel reliance and generating billions in savings."
+            },
+            {
+                titleTr: "Elektrik Altyapısı & Akıllı Şebekeler",
+                titleEn: "Electrical Infrastructure & Smart Grids",
+                cat: "Şebeke / Kuruluş: 2019",
+                img: "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=1000&q=80",
+                descTr: "<strong>Kuruluş Yılı ve Amacı:</strong> 2019 yılında TEİAŞ ve EDAŞ koordinasyonunda başlatılmıştır. Amaç; elektrik iletim ve dağıtım hatlarındaki teknik kayıp-kaçağı en aza indirmek, arızaları anında yapay zeka ile tespit ederek kesintisiz enerji sunmaktır.<br><br><strong>Neden İhtiyaç Duyuldu?:</strong> Eski tip hatların enerji iletiminde yüksek oranda kayıp yaratması ve artan sanayi taleplerini karşılamada yetersiz kalması bu dönüşümü zorunlu kılmıştır.<br><br><strong>Kim Gerçekleştirdi?:</strong> Türkiye Elektrik İletim A.Ş. mühendisleri ve yerli teknoloji firmaları ortaklaşa geliştirdi.<br><br><strong>Bize Neler Kazandıracak?:</strong> Elektrik iletiminde %15'e varan net verimlilik, sanayicilere kesintisiz akım ve milyonlarca kilovatsaat enerjinin boşa gitmesinin önlenmesi.",
+                descEn: "Established in 2019 to minimize transmission losses, providing up to 15% energy savings and uninterrupted power flow."
+            },
+            {
+                titleTr: "Güneş Enerjisi Santralleri (GES & YEKA)",
+                titleEn: "Solar Power Plants (GES & YEKA)",
+                cat: "Enerji / Kuruluş: 2020",
+                img: "https://images.unsplash.com/photo-1509391365360-2e959784a276?auto=format&fit=crop&w=1000&q=80",
+                descTr: "<strong>Kuruluş Yılı ve Amacı:</strong> 2020 yılında kurulan bu devasa güneş tarlaları; tarımsal sulama ve sanayi tesislerinin elektrik enerjisini tamamen güneşten karşılamak için tasarlanmıştır.<br><br><strong>Neden İhtiyaç Duyuldu?:</strong> Yüksek güneşlenme süresine sahip coğrafi avantajın ekonomik değere dönüştürülmemesi ve sanayinin ucuz, temiz enerji ihtiyacı.<br><br><strong>Kim Gerçekleştirdi?:</strong> Özel sektör yatırımları ve kamu teşvikiyle yerli mühendisler kurdu.<br><br><strong>Bize Neler Kazandıracak?:</strong> Karbon ayak izinin sıfırlanması, elektrik faturalarında devasa düşüşler ve dışa bağımlı olmayan enerji havuzu.",
+                descEn: "Established in 2020 to harness solar energy for agricultural and industrial hubs, achieving zero carbon footprint."
+            },
+            {
+                titleTr: "Doğal Gaz & Tüp Dönüşüm Verimliliği",
+                titleEn: "Natural Gas & LPG Efficiency Systems",
+                cat: "Dönüşüm / Kuruluş: 2017",
+                img: "https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=1000&q=80",
+                descTr: "<strong>Kuruluş Yılı ve Amacı:</strong> 2017'de konut ve sanayi ısıtma sistemlerinde yoğuşmalı teknolojiye geçiş hamlesidir. Amaç; yakıt sarfiyatını minimuma indirip maksimum ısı elde etmektir.<br><br><strong>Neden İhtiyaç Duyuldu?:</strong> Eski brülör ve kombilerin yüksek miktarda doğal gaz tüketip israf yaratması.<br><br><strong>Kim Gerçekleştirdi?:</strong> İlgili bakanlıklar ve yerli ısı teknolojisi üreticileri.<br><br><strong>Bize Neler Kazandıracak?:</strong> Hanelerde %25'e varan yakıt tasarrufu ve bütçe koruması.",
+                descEn: "Established in 2017 to transition into high-efficiency condensing boiler systems, providing up to 25% fuel savings."
+            },
+            {
+                titleTr: "Yağmur Suyu Hasadı & Akıllı Sulama",
+                titleEn: "Rainwater Harvesting & Smart Irrigation",
+                cat: "Su Yönetimi / Kuruluş: 2021",
+                img: "https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?auto=format&fit=crop&w=1000&q=80",
+                descTr: "<strong>Kuruluş Yılı ve Amacı:</strong> 2021'de iklim krizi ve kuraklıkla mücadele için zorunlu kılınmıştır. Amaç; çatı sularını depolamak ve tarımda akıllı damla sulamaya geçmektir.<br><br><strong>Neden İhtiyaç Duyuldu?:</strong> Yeraltı su kaynaklarının hızla tükenmesi ve tarımsal sulamadaki büyük su israfı.<br><br><strong>Kim Gerçekleştirdi?:</strong> Tarım ve Orman Bakanlığı ile belediyeler ortaklaşa yürüttü.<br><br><strong>Bize Neler Kazandıracak?:</strong> Tatlı su kaynaklarında %40 koruma ve kurak dönemlerde tarımsal güvence.",
+                descEn: "Established in 2021 to collect roof rainwater and enforce drip irrigation, achieving 40% freshwater conservation."
+            },
+            {
+                titleTr: "TOGG & Yerli Elektrikli Araç Ekosistemi",
+                titleEn: "TOGG & National EV Infrastructure",
+                cat: "Ulaşım / Kuruluş: 2022",
+                img: "https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=1000&q=80",
+                descTr: "<strong>Kuruluş Yılı ve Amacı:</strong> 2022 yılında devreye alınan TOGG projesi; fosil yakıt bağımlılığını bitiren, akıllı ve sıfır emisyonlu milli mobilite ekosistemi kurmaktır.<br><br><strong>Neden İhtiyaç Duyuldu?:</strong> Otomotiv sektöründeki küresel teknolojik dönüşümü yakalamak ve akaryakıt ithalatına giden milyarlarca doları ülkede tutmak.<br><br><strong>Kim Gerçekleştirdi?:</strong> Türkiye'nin Otomobili Girişim Grubu (TOGG) ve Türk mühendisleri.<br><br><strong>Bize Neler Kazandıracak?:</strong> Şarj başına %80 daha düşük ulaşım maliyeti, ileri teknoloji ihracatı ve güçlü yan sanayi.",
+                descEn: "Established in 2022 to eliminate fossil fuel reliance with zero-emission EVs, offering 80% lower per-km cost."
+            },
+            {
+                titleTr: "Sıfır Atık Hareketi & Dönüşüm",
+                titleEn: "Zero Waste Initiative & Recycling",
+                cat: "Çevre / Kuruluş: 2017",
+                img: "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&w=1000&q=80",
+                descTr: "<strong>Kuruluş Yılı ve Amacı:</strong> 2017'de başlatılan Sıfır Atık projesi; atıkları kaynağında ayrıştırarak doğayı korumak ve hammadde olarak yeniden ekonomiye kazandırmaktır.<br><br><strong>Neden İhtiyaç Duyuldu?:</strong> Çöplere giden değerli plastik, cam ve kağıtların yarattığı devasa ekolojik ve ekonomik yıkım.<br><br><strong>Kim Gerçekleştirdi?:</strong> Çevre, Şehircilik ve İklim Değişikliği Bakanlığı himayesinde tüm kamu kurumları ve belediyeler.<br><br><strong>Bize Neler Kazandıracak?:</strong> Milyonlarca ton hammadde tasarrufu, temiz şehirler ve gelecek nesillere yaşanabilir bir dünya.",
+                descEn: "Established in 2017 to separate waste at source and re-enter into the economy, saving millions of tons of raw materials."
+            },
+            {
+                titleTr: "Elektrikli Toplu Ulaşım & Raylı Sistemler",
+                titleEn: "Electric Public Transit & Rail Networks",
+                cat: "Ulaşım / Kuruluş: 2019",
+                img: "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=1000&q=80",
+                descTr: "<strong>Kuruluş Yılı ve Amacı:</strong> 2019'da metropollerde dizel otobüslerin yerine metro, tramvay ve elektrikli otobüs filolarının entegre edilmesidir.<br><br><strong>Neden İhtiyaç Duyuldu?:</strong> Şehir içi trafik yoğunluğu, egzoz emisyonları ve fosil yakıt tüketimini azaltmak.<br><br><strong>Kim Gerçekleştirdi?:</strong> Ulaştırma Bakanlığı ve büyükşehir belediyeleri.<br><br><strong>Bize Neler Kazandıracak?:</strong> Şehir içi hava kalitesinde dramatik artış ve toplu taşımada yakıt maliyeti düşüşü.",
+                descEn: "Established in 2019 to replace diesel buses with electric transit networks, ensuring clean urban air."
+            },
+            {
+                titleTr: "Dijital Vergi & e-Fatura Dönüşümü",
+                titleEn: "Digital Tax & e-Invoice Systems",
+                cat: "Maliye / Kuruluş: 2018",
+                img: "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=1000&q=80",
+                descTr: "<strong>Kuruluş Yılı ve Amacı:</strong> 2018'de Gelir İdaresi Başkanlığı tarafından kurulan sistem; vergi ve muhasebe süreçlerini tamamen dijitalleştirip kağıt maliyetini bitirmektir.<br><br><strong>Neden İhtiyaç Duyuldu?:</strong> Kağıt fatura bürokrasisinin yavaşlığı ve kayıtdışı ekonominin önlenmesi.<br><br><strong>Kim Gerçekleştirdi?:</strong> Hazine ve Maliye Bakanlığı.<br><br><strong>Bize Neler Kazandıracak?:</strong> Kayıtdışılığın azalması, anlık veri takibi ve milyarlarca sayfa kağıt tasarrufu.",
+                descEn: "Established in 2018 for end-to-end tax digitization, eliminating paper waste and informal economic leakages."
+            },
+            {
+                titleTr: "Yerli Bor Madeni İşleme Teknolojileri",
+                titleEn: "Domestic Boron Processing & Tech",
+                cat: "Madencilik / Kuruluş: 2019",
+                img: "https://images.unsplash.com/photo-1578328819058-b69f3a3b0f6b?auto=format&fit=crop&w=1000&q=80",
+                descTr: "<strong>Kuruluş Yılı ve Amacı:</strong> 2019'da Eti Maden bünyesinde kurulan tesisler; boru ham olarak değil, ileri teknoloji uç ürün olarak dünyaya satmaktır.<br><br><strong>Neden İhtiyaç Duyuldu?:</strong> Dünyanın en büyük bor rezervlerine sahip ülkenin hammaddeyi ucuza satıp işlenmiş ürünü pahalıya geri almasını engellemek.<br><br><strong>Kim Gerçekleştirdi?:</strong> Eti Maden ve TÜBİTAK Ar-Ge merkezleri.<br><br><strong>Bize Neler Kazandıracak?:</strong> İhracatta katma değerin katlanması ve savunma sanayii ile cam sektöründe hammadde üstünlüğü.",
+                descEn: "Established in 2019 to process raw boron into high-value technological end-products, maximizing export revenue."
+            },
+            {
+                titleTr: "Milli Sondaj Gemileri & Karadeniz Gazı",
+                titleEn: "National Drilling Fleet & Black Sea Gas",
+                cat: "Enerji / Kuruluş: 2020",
+                img: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1000&q=80",
+                descTr: "<strong>Kuruluş Yılı ve Amacı:</strong> 2020'de Fatih, Yavuz, Kanuni ve Abdülhamid Han gemileriyle denizde kendi sondajımızı yapıp Karadeniz gazını karaya bağlamaktır.<br><br><strong>Neden İhtiyaç Duyuldu?:</strong> Yabancı kiralık gemilere yüksek döviz ödemekten kurtulmak ve kendi enerjimizi kendi imkanlarımızla bulmak.<br><br><strong>Kim Gerçekleştirdi?:</strong> TPAO ve denizcilik mühendislerimiz.<br><br><strong>Bize Neler Kazandıracak?:</strong> Konutların doğal gaz ihtiyacının yerli kaynaklarla karşılanması ve dışa bağımlılığın azalması.",
+                descEn: "Established in 2020 with a national drilling fleet to explore and supply domestic natural gas from the Black Sea."
+            },
+            {
+                titleTr: "Kağıtsız Devlet (e-Devlet) Entegrasyonu",
+                titleEn: "Paperless Government (e-Gov) Tech",
+                cat: "Dijitalleşme / Kuruluş: 2016",
+                img: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1000&q=80",
+                descTr: "<strong>Kuruluş Yılı ve Amacı:</strong> 2016'dan itibaren geliştirilen e-Devlet kapısı; kamu hizmetlerini dijitalleştirerek vatandaşın evinden işini görmesini sağlamaktır.<br><br><strong>Neden İhtiyaç Duyuldu?:</strong> Devlet dairelerindeki uzun kuyruklar ve milyonlarca yaprak evrak kırtasiyeciliği.<br><br><strong>Kim Gerçekleştirdi?:</strong> Cumhurbaşkanlığı Dijital Dönüşüm Ofisi ve Türksat.<br><br><strong>Bize Neler Kazandıracak?:</strong> Zaman tasarrufu, kamu verimliliği ve devasa kağıt ile toner tasarrufu.",
+                descEn: "Established in 2016 to consolidate public services digitally, saving billions of paper sheets and citizen time."
+            },
+            {
+                titleTr: "Yerli Ödeme Sistemi TROY & Finansal Tasarruf",
+                titleEn: "TROY Domestic Payment System",
+                cat: "Finans / Kuruluş: 2017",
+                img: "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&w=1000&q=80",
+                descTr: "<strong>Kuruluş Yılı ve Amacı:</strong> 2017'de kurulan TROY; uluslararası kart kuruluşlarına ödenen yüksek komisyonları ülke içinde tutan milli ödeme altyapısıdır.<br><br><strong>Neden İhtiyaç Duyuldu?:</strong> Finansal güvenlik ve her kart işleminde yurt dışına giden milyonlarca liralık komisyonları önlemek.<br><br><strong>Kim Gerçekleştirdi?:</strong> Bankalararası Kart Merkezi (BKM) ve TCMB.<br><br><strong>Bize Neler Kazandıracak?:</strong> Ülke içindeki finansal verinin güvenliği ve komisyonların yerli ekonomide kalması.",
+                descEn: "Established in 2017 to keep card clearing local, preventing foreign commission outflow and ensuring financial security."
+            },
+            {
+                titleTr: "Gıda İsrafı Mimarisi & Soğuk Zincir",
+                titleEn: "Food Waste Architecture & Cold Chain",
+                cat: "Tarım / Kuruluş: 2020",
+                img: "https://images.unsplash.com/photo-1610348725531-843dff563e2c?auto=format&fit=crop&w=1000&q=80",
+                descTr: "<strong>Kuruluş Yılı ve Amacı:</strong> 2020'de tarladan sofraya olan tedarik zincirinde gıda kayıplarını önlemek için kurulan lojistik ve depolama mimarisidir.<br><br><strong>Neden İhtiyaç Duyuldu?:</strong> Hasat edilen meyve ve sebzelerin %30'unun uygunsuz nakliye ve soğuk zincir eksikliğinden çürümesi.<br><br><strong>Kim Gerçekleştirdi?:</strong> Tarım Bakanlığı ve kooperatifler.<br><br><strong>Bize Neler Kazandıracak?:</strong> Milyonlarca ton gıdanın çöpe gitmesinin önlenmesi ve enflasyona karşı gıda arz güvenliği.",
+                descEn: "Established in 2020 to prevent agricultural spoilage and food waste across the supply chain, saving millions of tons of food."
+            },
+            {
+                titleTr: "Şehir Hastaneleri & Medikal Tasarruf",
+                titleEn: "City Hospitals & Medical Efficiency",
+                cat: "Sağlık / Kuruluş: 2019",
+                img: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=1000&q=80",
+                descTr: "<strong>Kuruluş Yılı ve Amacı:</strong> 2019'da entegre sağlık kampüsleri olarak kurulan Şehir Hastaneleri; tedavi, laboratuvar ve lojistiği tek çatı altında toplar.<br><br><strong>Neden İhtiyaç Duyuldu?:</strong> Dağınık ve eski hastanelerin yüksek operasyonel maliyetleri ile yetersiz donanımları.<br><br><strong>Kim Gerçekleştirdi?:</strong> Sağlık Bakanlığı ve özel-kamu işbirliği.<br><br><strong>Bize Neler Kazandıracak?:</strong> Merkezi yönetimle medikal lojistikte devasa tasarruf ve dünya standartlarında sağlık hizmeti.",
+                descEn: "Established in 2019 to integrate healthcare campuses, lowering medical logistics costs and improving efficiency."
+            },
+            {
+                titleTr: "Akıllı Otoyollar & Zaman Tasarrufu",
+                titleEn: "Smart Highways & Travel Time Reduction",
+                cat: "Altyapı / Kuruluş: 2021",
+                img: "https://images.unsplash.com/photo-1506521781263-d8422e82f27a?auto=format&fit=crop&w=1000&q=80",
+                descTr: "<strong>Kuruluş Yılı ve Amacı:</strong> 2021'de sensörler ve yapay zeka ile donatılan otoyollar; dur-kalk trafiğini önleyerek yakıt ve zaman tasarrufu sağlar.<br><br><strong>Neden İhtiyaç Duyuldu?:</strong> Boşta çalışan araçların yarattığı milyarlarca dolarlık akaryakıt israfı ve trafik stresi.<br><br><strong>Kim Gerçekleştirdi?:</strong> Karayolları Genel Müdürlüğü.<br><br><strong>Bize Neler Kazandıracak?:</strong> Yılda milyonlarca litre yakıt tasarrufu ve sıfır dur-kalk ile karbon salınımında azalma.",
+                descEn: "Established in 2021 to reduce highway traffic stops through smart sensor arrays, saving massive amounts of fuel and time."
+            },
+            {
+                titleTr: "Dijital Okullar & Akıllı Tahta Ekosistemi",
+                titleEn: "Digital Schools & Smart Boards",
+                cat: "Eğitim / Kuruluş: 2018",
+                img: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1000&q=80",
+                descTr: "<strong>Kuruluş Yılı ve Amacı:</strong> 2018'de Fatih projesi ve sonraki evreleriyle sınıflara kurulan akıllı tahta ve dijital içerik sistemidir.<br><br><strong>Neden İhtiyaç Duyuldu?:</strong> Geleneksel tahta ve ağır basılı kitap maliyetlerini ortadan kaldırıp interaktif eğitime geçmek.<br><br><strong>Kim Gerçekleştirdi?:</strong> Millî Eğitim Bakanlığı (MEB).<br><br><strong>Bize Neler Kazandıracak?:</strong> Yıllık tonlarca kağıt ve matbaa tasarrufu, öğrencilere eşit dijital imkanlar.",
+                descEn: "Established in 2018 to digitalize classroom content and eliminate heavy printing costs through smart boards."
+            },
+            {
+                titleTr: "Millet Kütüphaneleri & Dijital Arşivler",
+                titleEn: "National Libraries & Digital Archives",
+                cat: "Kültür / Kuruluş: 2020",
+                img: "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=1000&q=80",
+                descTr: "<strong>Kuruluş Yılı ve Amacı:</strong> 2020'de açılan Millet Kütüphanesi ve dijitalleştirilen devlet arşivleri; bilgiye ve nadide eserlere 7/24 ücretsiz erişim sağlar.<br><br><strong>Neden İhtiyaç Duyuldu?:</strong> Araştırmacıların kaynaklara kolayca ulaşabilmesi ve fiziksel arşivlerin dijital ortamda korunması.<br><br><strong>Kim Gerçekleştirdi?:</strong> Cumhurbaşkanlığı ve Devlet Arşivleri Başkanlığı.<br><br><strong>Bize Neler Kazandıracak?:</strong> Bilgiye sıfır maliyetle erişim ve kültürel mirasın dijital olarak gelecek nesillere aktarılması.",
+                descEn: "Established in 2020 to open free public access to digital archives and national library resources."
+            }
+        ];
+
+        let catalogData = JSON.parse(localStorage.getItem('tasarruf_catalog')) || initialCatalog;
+
+        function renderDefter() {
+            const container = document.getElementById('defterAkisi');
+            container.innerHTML = '';
+
+            // 1. KAPAK SAYFASI
+            const coverDiv = document.createElement('div');
+            coverDiv.className = "bg-slate-900 border border-emerald-500/40 p-8 lg:p-12 rounded-2xl shadow-2xl space-y-6 text-center relative overflow-hidden";
+            coverDiv.innerHTML = `
+                <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#10b981_1px,transparent_1px)] [background-size:16px_16px]"></div>
+                <div class="relative z-10 space-y-4">
+                    <span class="bg-emerald-500 text-slate-950 text-xs font-black px-4 py-1.5 rounded-full uppercase tracking-widest">Resmî Tasarım ve Ar-Ge Defteri</span>
+                    <h2 class="text-3xl lg:text-5xl font-black text-white tracking-tight">TASARRUF DEVRİ & SIFIR ATIK</h2>
+                    <p class="text-slate-300 max-w-2xl mx-auto text-sm leading-relaxed">
+                        Bu defter; ülkemizin enerji bağımsızlığından sıfır atık hedeflerine, akıllı şebekelerden dijital devlet uygulamalarına kadar uzanan 18 stratejik hamleyi tüm detayları, gerekçeleri ve gelecek vizyonuyla alt alta incelemeniz için hazırlanmıştır.
+                    </p>
+                    <div class="pt-6 border-t border-slate-800 flex flex-wrap justify-center items-center text-xs text-slate-400 gap-6">
+                        <span>Sorumlu Yöneticiler: <strong class="text-slate-200">Yener & Oktay</strong></span>
+                        <span>•</span>
+                        <span class="text-emerald-400 font-mono">Arşiv Sürümü: 2026.1</span>
+                    </div>
+                </div>
+            `;
+            container.appendChild(coverDiv);
+
+            // 2. 18 DETAYLI SAYFA
+            catalogData.forEach((item, idx) => {
+                const pageNum = idx + 1;
+                const pageDiv = document.createElement('div');
+                pageDiv.className = "bg-slate-900 border border-slate-800 rounded-2xl p-6 lg:p-8 grid grid-cols-1 md:grid-cols-12 gap-6 items-start shadow-xl";
+                pageDiv.innerHTML = `
+                    <div class="md:col-span-5 relative sticky top-24">
+                        <img src="${item.img}" alt="${item.titleTr}" class="w-full h-64 object-cover rounded-xl border border-slate-800 shadow-md">
+                        <span class="absolute top-3 left-3 bg-slate-950/95 backdrop-blur text-emerald-400 text-xs font-bold px-3 py-1 rounded border border-emerald-500/30 shadow">${item.cat}</span>
+                    </div>
+                    <div class="md:col-span-7 space-y-5">
+                        <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                            <span class="text-xs font-mono text-emerald-400 font-bold uppercase tracking-wider">YAPRAK NO: ${pageNum} / 18</span>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex items-center gap-2">
+                                <span class="bg-emerald-500/20 text-emerald-400 text-[11px] font-bold px-2.5 py-0.5 rounded border border-emerald-500/30">TR</span>
+                                <h3 class="text-lg lg:text-xl font-bold text-white">${item.titleTr}</h3>
+                            </div>
+                            <div class="text-slate-300 text-xs lg:text-sm leading-relaxed pl-7 space-y-2 border-l-2 border-emerald-500/30 ml-2 py-1">
+                                ${item.descTr}
+                            </div>
+                        </div>
+                        <div class="space-y-2 pt-3 border-t border-slate-800/80">
+                            <div class="flex items-center gap-2">
+                                <span class="bg-cyan-500/20 text-cyan-400 text-[11px] font-bold px-2.5 py-0.5 rounded border border-cyan-500/30">EN</span>
+                                <h4 class="text-sm font-semibold text-slate-200">${item.titleEn}</h4>
+                            </div>
+                            <p class="text-slate-400 text-xs leading-relaxed pl-7 border-l-2 border-cyan-500/30 ml-2 py-1">${item.descEn}</p>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(pageDiv);
+            });
+        }
+
+        // WINAMP AUDIO CONTROLS
+        const audio = document.getElementById('audioPlayer');
+        let timer = null;
+
+        function playAudio() {
+            audio.play().then(() => {
+                document.getElementById('playStateBadge').innerText = "YAYINDA";
+                document.getElementById('playStateBadge').className = "text-xs text-emerald-400 font-mono-winamp font-bold animate-pulse";
+                if (!timer) timer = setInterval(updateTime, 1000);
+            }).catch(e => alert("Tarayıcı kısıtlaması nedeniyle oynatılamadı. Lütfen tekrar deneyin."));
+        }
+
+        function pauseAudio() {
+            audio.pause();
+            document.getElementById('playStateBadge').innerText = "DURAKLATILDI";
+            document.getElementById('playStateBadge').className = "text-xs text-amber-400 font-mono-winamp font-bold";
+        }
+
+        function toggleMute() {
+            audio.muted = !audio.muted;
+            document.getElementById('muteBtn').innerText = audio.muted ? "Sesi Aç" : "Sesi Kıs";
+        }
+
+        function changeStation(url, title) {
+            audio.src = url;
+            audio.load();
+            document.getElementById('trackTitleDisplay').innerText = title;
+            playAudio();
+        }
+
+        function updateTime() {
+            if (!audio.paused) {
+                const c = Math.floor(audio.currentTime);
+                const m = Math.floor(c / 60).toString().padStart(2, '0');
+                const s = (c % 60).toString().padStart(2, '0');
+                document.getElementById('timeDisplay').innerText = `${m}:${s}`;
+            }
+        }
+
+        // ADMIN MODAL
+        function toggleAdminModal() { document.getElementById('adminModal').classList.toggle('hidden'); }
+        function loginAdmin() {
+            const u = document.getElementById('adminUser').value.trim().toLowerCase();
+            const p = document.getElementById('adminPass').value.trim();
+            if ((u === "yener" || u === "oktay") && p === "123456") {
+                alert("Giriş Başarılı! Yener & Oktay Yönetici Paneli onaylandı.");
+                toggleAdminModal();
+            } else {
+                alert("Hatalı kullanıcı adı veya şifre! (Şifre: 123456)");
+            }
+        }
+
+        window.onload = renderDefter;
+    </script>
+</body>
+</html>
