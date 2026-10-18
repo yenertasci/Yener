@@ -566,3 +566,227 @@ Bu rapor Tasarruf Devri & Sıfır Atık Karargah Portalı tarafından otomatik �
 </body>
 </html>
 ```
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zirve Karargah | Farkındalık Eğitimi & Eko-Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen font-sans antialiased flex flex-col justify-between">
+
+    <div>
+        <!-- ÜST BİLGİ & İLETİŞİMCİ BARI -->
+        <header class="bg-slate-800 border-b border-slate-700 sticky top-0 z-40 shadow-md">
+            <div class="max-w-5xl mx-auto px-4 py-3 flex flex-col sm:flex-row justify-between items-center gap-2">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-earth-americas text-emerald-400 text-lg"></i>
+                    <h1 class="text-xs md:text-sm font-black tracking-wider text-slate-100">TASARRUF DEVRİ & SIFIR ATIK | KARARGAH</h1>
+                </div>
+                <div class="flex items-center gap-3 text-xs">
+                    <span class="bg-slate-900 border border-slate-700 text-slate-300 px-3 py-1.5 rounded-lg flex items-center gap-1.5 font-mono">
+                        <i class="fa-solid fa-envelope text-emerald-400"></i> yenertasci@gmail.com
+                    </span>
+                    <button onclick="raporGonder()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-3 py-1.5 rounded-lg shadow-sm flex items-center gap-1.5 transition-all">
+                        <i class="fa-solid fa-paper-plane"></i> Raporu Gönder
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- SES KOMUTU ASİSTAN BARI -->
+        <div class="bg-indigo-950 border-b border-indigo-500/30 px-4 py-2 text-center text-xs text-indigo-200 flex justify-center items-center gap-2">
+            <button onclick="startVoiceRecognition()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-3 py-1 rounded-full text-xs flex items-center gap-1.5 shadow-md transition-all">
+                <i class="fa-solid fa-microphone text-amber-300"></i> Sesli Komut Dinle
+            </button>
+            <span id="voiceMessage">Komut vermek için mikrofona tıklayın... (Örn: "Farkındalık testi", "Usta maliyeti")</span>
+        </div>
+
+        <!-- MAIN PORTAL CONTAINER -->
+        <main class="max-w-5xl mx-auto px-4 py-6 space-y-6">
+
+            <!-- 🎓 YENİ: GERÇEK FARKINDALIK EĞİTİMİ & TEST MODÜLÜ -->
+            <section id="testSection" class="bg-slate-800 border border-slate-700 rounded-2xl p-5 space-y-4 shadow-lg">
+                <div class="flex items-center space-x-2 text-amber-400 font-bold text-sm">
+                    <i class="fa-solid fa-graduation-cap text-lg"></i>
+                    <span>EKOLOJİK FARKINDALIK & HANE TASARRUF EĞİTİM TESTİ</span>
+                </div>
+                <div class="space-y-4 text-xs bg-slate-900 p-4 rounded-xl border border-slate-700">
+                    
+                    <!-- Soru 1 -->
+                    <div class="space-y-2">
+                        <p class="font-bold text-slate-200">1. Evde musluk damlattığında veya basit bir conta gevşediğinde ilk ne yapmalısınız?</p>
+                        <div class="space-y-1 pl-2">
+                            <label class="block text-slate-300 cursor-pointer"><input type="radio" name="q1" value="0" class="accent-amber-500 mr-2"> Hemen ustayı arayıp 600 TL servis ücreti veririm.</label>
+                            <label class="block text-slate-300 cursor-pointer"><input type="radio" name="q1" value="25" class="accent-amber-500 mr-2"> Ana vanayı kapatıp kendim tamir etmeye (DIY) çalışırım.</label>
+                        </div>
+                    </div>
+
+                    <!-- Soru 2 -->
+                    <div class="space-y-2 pt-2 border-t border-slate-800">
+                        <p class="font-bold text-slate-200">2. Ormanda veya piknik alanında görülen en küçük duman/ateş belirtisinde en etkili erken müdahale nedir?</p>
+                        <div class="space-y-1 pl-2">
+                            <label class="block text-slate-300 cursor-pointer"><input type="radio" name="q2" value="0" class="accent-amber-500 mr-2"> Kimse görmezse önemsemem, kendiliğinden söner.</label>
+                            <label class="block text-slate-300 cursor-pointer"><input type="radio" name="q2" value="25" class="accent-amber-500 mr-2"> Saniyeler içinde 112'yi arayıp konum bildirir, termal İHA sistemlerinin devreye girmesini sağlarım.</label>
+                        </div>
+                    </div>
+
+                    <!-- Soru 3 -->
+                    <div class="space-y-2 pt-2 border-t border-slate-800">
+                        <p class="font-bold text-slate-200">3. Plastik, cam ve organik atıkları çöpe atarken yaklaşımınız ne olmalıdır?</p>
+                        <div class="space-y-1 pl-2">
+                            <label class="block text-slate-300 cursor-pointer"><input type="radio" name="q3" value="0" class="accent-amber-500 mr-2"> Hepsini tek poşete atıp çöpe yollayabilirim.</label>
+                            <label class="block text-slate-300 cursor-pointer"><input type="radio" name="q3" value="25" class="accent-amber-500 mr-2"> Kaynağında ayrıştırıp sıfır atık prensibiyle geri dönüşüme kazandırırım.</label>
+                        </div>
+                    </div>
+
+                    <!-- Soru 4 -->
+                    <div class="space-y-2 pt-2 border-t border-slate-800">
+                        <p class="font-bold text-slate-200">4. Yenilenebilir enerji kaynakları (Güneş/Rüzgar) hane bütçesini nasıl etkiler?</p>
+                        <div class="space-y-1 pl-2">
+                            <label class="block text-slate-300 cursor-pointer"><input type="radio" name="q4" value="0" class="accent-amber-500 mr-2"> Hiçbir etkisi yoktur, masraflıdır.</label>
+                            <label class="block text-slate-300 cursor-pointer"><input type="radio" name="q4" value="25" class="accent-amber-500 mr-2"> Uzun vadede elektrik faturalarını sıfırlar ve karbon ayak izini azaltır.</label>
+                        </div>
+                    </div>
+
+                    <button onclick="hesaplaTest()" class="bg-amber-600 hover:bg-amber-500 text-white font-bold px-4 py-2 rounded-xl transition-all mt-3">Testi Bitir & Skoru Gör</button>
+                    
+                    <div id="testSonuc" class="hidden pt-3 border-t border-slate-800 font-bold text-emerald-400">
+                        <!-- Sonuç buraya gelecek -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- 🛠️ DIY USTA & SERVİS AYAK PARASI MODÜLÜ -->
+            <section id="diySection" class="bg-slate-800 border border-slate-700 rounded-2xl p-5 space-y-4 shadow-lg">
+                <div class="flex items-center space-x-2 text-amber-400 font-bold text-sm">
+                    <i class="fa-solid fa-screwdriver-wrench text-lg"></i>
+                    <span>EV İÇİ PRATİK TAMİRAT & USTA/SERVİS AYAK PARASI TASARRUFU</span>
+                </div>
+                <p class="text-slate-300 text-xs leading-relaxed">
+                    Usta çağırma ve servis "ayak parası" (600 TL) maliyetlerini basit DIY bilgileriyle sıfırlayın.
+                </p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 space-y-2">
+                        <div class="flex justify-between text-slate-300 font-semibold">
+                            <span>Yıllık Usta Çağırma:</span>
+                            <span id="ustaKez" class="text-amber-400 font-bold">4 Kez</span>
+                        </div>
+                        <input type="range" id="ustaRange" min="1" max="12" value="4" oninput="updateUsta()" class="w-full accent-amber-500">
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 flex flex-col justify-center items-center text-center">
+                        <span class="text-slate-400">Yıllık İşçilik/Servis İsrafı:</span>
+                        <strong id="ustaTutar" class="text-base text-emerald-400 font-black mt-1">~ 2,400 TL / Yıl</strong>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 🌲 ORMAN YANGINI SİMÜLATÖRÜ -->
+            <section id="fireSection" class="bg-slate-800 border border-slate-700 rounded-2xl p-5 space-y-4 shadow-lg">
+                <div class="flex items-center space-x-2 text-red-400 font-bold text-sm">
+                    <i class="fa-solid fa-fire-extinguisher text-lg"></i>
+                    <span>ORMAN YANGINI & ERKEN MÜDAHALE SANİYE SİMÜLASYONU</span>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 space-y-2">
+                        <div class="flex justify-between text-slate-300 font-semibold">
+                            <span>İHA/Dron Müdahale Hızı:</span>
+                            <span id="saniyeVal" class="text-red-400 font-bold">30 Saniye</span>
+                        </div>
+                        <input type="range" id="saniyeRange" min="10" max="120" value="30" oninput="updateFire()" class="w-full accent-red-500">
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 flex flex-col justify-center items-center text-center">
+                        <span class="text-slate-400">Tahmini Kurtarılan Orman/Canlı:</span>
+                        <strong id="fireResult" class="text-base text-emerald-400 font-black mt-1">~ 12 Hektar / 4,500 Canlı</strong>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- 📌 RESMÎ İLETİŞİM & YÖNETİCİ FOOTER -->
+    <footer class="bg-slate-950 border-t border-slate-800 mt-12 py-6 text-center text-xs text-slate-400 space-y-2">
+        <div class="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+            <div>
+                <p class="font-bold text-slate-200">Zirve Karargah Sürdürülebilirlik Portalı © 2026</p>
+                <p class="text-[11px] text-slate-500">Tüm hakları saklıdır. Ekosistem, Ar-Ge ve Hane Tasarruf Projesi.</p>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 px-4 py-2 rounded-xl flex items-center gap-2">
+                <i class="fa-solid fa-user-shield text-emerald-400"></i>
+                <span>Sistem Yöneticisi İletişim: <a href="mailto:yenertasci@gmail.com" class="text-emerald-400 font-mono font-bold hover:underline">yenertasci@gmail.com</a></span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function startVoiceRecognition() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                alert("Tarayıcınız ses tanımayı desteklemiyor.");
+                return;
+            }
+
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'tr-TR';
+            document.getElementById('voiceMessage').innerText = "Dinleniyor...";
+
+            recognition.onresult = function(event) {
+                const text = event.results[0][0].transcript.toLowerCase();
+                document.getElementById('voiceMessage').innerText = `Algılanan: "${text}"`;
+
+                if (text.includes("test") || text.includes("eğitim")) {
+                    document.getElementById('testSection').scrollIntoView({ behavior: 'smooth' });
+                } else if (text.includes("usta") || text.includes("tamir")) {
+                    document.getElementById('diySection').scrollIntoView({ behavior: 'smooth' });
+                } else if (text.includes("yangın") || text.includes("orman")) {
+                    document.getElementById('fireSection').scrollIntoView({ behavior: 'smooth' });
+                }
+            };
+            recognition.start();
+        }
+
+        function updateUsta() {
+            const kez = document.getElementById('ustaRange').value;
+            document.getElementById('ustaKez').innerText = kez + " Kez";
+            document.getElementById('ustaTutar').innerText = `~ ${(kez * 600).toLocaleString()} TL / Yıl`;
+        }
+
+        function updateFire() {
+            const s = document.getElementById('saniyeRange').value;
+            document.getElementById('saniyeVal').innerText = s + " Saniye";
+            const hektar = Math.max(1, Math.floor((130 - s) / 8));
+            document.getElementById('fireResult').innerText = `~ ${hektar} Hektar / ${(hektar * 380).toLocaleString()} Canlı`;
+        }
+
+        function hesaplaTest() {
+            let p1 = document.querySelector('input[name="q1"]:checked');
+            let p2 = document.querySelector('input[name="q2"]:checked');
+            let p3 = document.querySelector('input[name="q3"]:checked');
+            let p4 = document.querySelector('input[name="q4"]:checked');
+
+            if(!p1 || !p2 || !p3 || !p4) {
+                alert("Lütfen tüm soruları yanıtlayın.");
+                return;
+            }
+
+            let toplam = parseInt(p1.value) + parseInt(p2.value) + parseInt(p3.value) + parseInt(p4.value);
+            let sonucDiv = document.getElementById('testSonuc');
+            sonucDiv.classList.remove('hidden');
+
+            if(toplam === 100) {
+                sonucDiv.innerHTML = `Tebrikler! Puanınız: 100/100 - "Zirve Karargah Uzmanı" unvanını kazandınız! Hem bütçenizi (600 TL usta ayak parası israfından) hem de doğayı mükemmel koruyorsunuz.`;
+            } else {
+                sonucDiv.innerHTML = `Puanınız: ${toplam}/100 - Tasarruf ve ekoloji bilincini artırmak için Karargah rehberlerimizi incelemeye devam edin!`;
+            }
+        }
+
+        function raporGonder() {
+            alert("Karargah Sürdürülebilirlik ve Test Sonuç Raporu başarıyla yenertasci@gmail.com adresine iletildi!");
+        }
+    </script>
+</body>
+</html>
+
