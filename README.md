@@ -1,1 +1,0 @@
-Tasarruf Devri Kendi Kanalım
