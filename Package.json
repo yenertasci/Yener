@@ -1,0 +1,27 @@
+{
+  "name": "moduler-web-projesi",
+  "version": "1.0.0",
+  "description": "Yönetim paneli, profil ve index sayfalarından oluşan modüler web projesi",
+  "main": "script.js",
+  "scripts": {
+    "start": "node script.js",
+    "dev": "echo \"Geliştirme ortamı hazır\""
+  },
+  "keywords": [
+    "supabase",
+    "admin-panel",
+    "yonetim-paneli",
+    "profil-sayfasi",
+    "moduler-web-app",
+    "html5",
+    "css3",
+    "javascript",
+    "clean-architecture",
+    "github-repository"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0"
+  }
+}
