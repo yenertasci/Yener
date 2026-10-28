@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Yeni İş Emri Oluştur - Metal Takip</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f4f7f6; }
+        nav { background: #2c3e50; padding: 12px; margin-bottom: 20px; border-radius: 6px; }
+        nav a { color: white; text-decoration: none; margin-right: 15px; font-weight: bold; }
+        nav a:hover { text-decoration: underline; }
+
+        .form-card { background: white; padding: 25px; border-radius: 8px; width: 450px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin: auto; }
+        .form-card h3 { margin-top: 0; color: #2c3e50; border-bottom: 2px solid #ddd; padding-bottom: 8px; }
+
+        label { display: block; margin-top: 15px; font-weight: bold; color: #555; }
+        input, select { width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
+
+        .btn { background: #27ae60; color: white; border: none; padding: 10px 15px; cursor: pointer; border-radius: 4px; font-size: 15px; margin-top: 20px; width: 100%; }
+        .btn:hover { background: #219653; }
+    </style>
+</head>
+<body>
+
+    <!-- Üst Menü -->
+    <nav>
+        <a href="panel.html">Ana Panel</a>
+        <a href="yeni-is-emri.html" style="color: #f1c40f;">Yeni İş Emri</a>
+        <a href="uretim.html">Üretim</a>
+        <a href="stok-takip.html">Stok Takip</a>
+        <a href="raporlar.html">Raporlar</a>
+    </nav>
+
+    <div class="form-card">
+        <h3>Yeni Metal İş Emri Girişi</h3>
+        <form id="yeniIsEmriForm">
+            <label>Metal Malzeme / Cinsi:</label>
+            <select id="malzemeCinsi" required>
+                <option value="3mm DKP Sac (ST37)">3mm DKP Sac (ST37)</option>
+                <option value="4mm S235JR Sac">4mm S235JR Sac</option>
+                <option value="40x40 Kutu Profil">40x40 Kutu Profil</option>
+                <option value="10mm Lama Demir">10mm Lama Demir</option>
+            </select>
+
+            <label>Müşteri / Proje Adı:</label>
+            <input type="text" id="musteriAdi" placeholder="Örn: Çelik Makine A.Ş." required>
+
+            <label>Kesim Ölçüsü (mm):</label>
+            <input type="text" id="kesimOlcusu" placeholder="Örn: 500x1200 mm" required>
+
+            <label>Adet:</label>
+            <input type="number" id="adet" value="1" min="1" required>
+
+            <button type="submit" class="btn">İş Emrini Kaydet ve Barkod Üret</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('yeniIsEmriForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Benzersiz iş emri numarası üret
+            const rastgeleNo = "IE-" + Math.floor(100000 + Math.random() * 900000);
+            const malzeme = document.getElementById('malzemeCinsi').value;
+            const musteri = document.getElementById('musteriAdi').value;
+            const kesim = document.getElementById('kesimOlcusu').value + " (" + document.getElementById('adet').value + " Adet)";
+            const adetSayisi = document.getElementById('adet').value;
+
+            // LocalStorage'a kaydet (diğer sayfalardan okunabilsin diye)
+            let kayitliIsler = JSON.parse(localStorage.getItem('metal_is_emirleri')) || [];
+            kayitliIsler.unshift({
+                no: rastgeleNo,
+                malzeme: malzeme,
+                musteri: musteri,
+                kesim: kesim,
+                adet: adetSayisi
+            });
+            localStorage.setItem('metal_is_emirleri', JSON.stringify(kayitliIsler));
+
+            // Bilgileri URL parametreleri ile etiket.html sayfasına gönder ve oraya yönlendir
+            const hedefUrl = `etiket.html?no=${encodeURIComponent(rastgeleNo)}&musteri=${encodeURIComponent(musteri)}&malzeme=${encodeURIComponent(malzeme)}&kesim=${encodeURIComponent(kesim)}`;
+            window.location.href = hedefUrl;
+        });
+    </script>
+
+</body>
+</html>
