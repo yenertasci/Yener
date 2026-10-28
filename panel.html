@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="tr" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DYS - Ultimate v12.0 Tek Dosya Komuta Merkezi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        .barcode-lines { background: repeating-linear-gradient(90deg, #0f172a, #0f172a 2px, #ffffff 2px, #ffffff 4px, #ffffff 4px, #ffffff 7px, #ffffff 7px, #ffffff 9px); height: 48px; width: 100%; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #020617; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 9999px; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
+
+    <div id="systemToastContainer" class="fixed top-20 right-5 z-50 space-y-2 pointer-events-none"></div>
+
+    <header class="bg-slate-900/90 border-b border-slate-800 sticky top-0 z-50 backdrop-blur-xl">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
+                    <i class="fa-solid fa-shield-halved text-xl animate-pulse"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-base text-white flex items-center space-x-2">
+                        <span>DYS Komuta Merkezi</span>
+                        <span class="text-[10px] bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 px-2 py-0.5 rounded-full font-mono">TEK DOSYA v12.0</span>
+                    </h1>
+                    <p class="text-xs text-slate-400">Endüstriyel Yönetim & Oda Gözetim Matrisi</p>
+                </div>
+            </div>
+            <button onclick="triggerEmergencyStop()" class="bg-rose-600/20 text-rose-400 border border-rose-500/40 px-3 py-1.5 rounded-xl text-xs font-semibold">
+                Acil Durdur
+            </button>
+        </div>
+    </header>
+
+    <nav class="bg-slate-900/50 border-b border-slate-800 py-2">
+        <div class="max-w-7xl mx-auto px-4 flex space-x-2 overflow-x-auto">
+            <button onclick="switchTab('generator')" id="tab-generator" class="tab-btn px-4 py-2 rounded-xl text-xs font-semibold bg-emerald-600 text-white">Kart Üreticisi</button>
+            <button onclick="switchTab('room')" id="tab-room" class="tab-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 text-slate-300">Oda Gözetim & AI</button>
+            <button onclick="switchTab('archive')" id="tab-archive" class="tab-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 text-slate-300">Arşiv & Excel</button>
+            <button onclick="switchTab('metaverse')" id="tab-metaverse" class="tab-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 text-slate-300">Metaverse</button>
+        </div>
+    </nav>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 py-6">
+        <!-- TAB 1: KART ÜRETİCİSİ -->
+        <div id="content-generator" class="tab-content grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div class="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
+                <h2 class="text-sm font-semibold text-white uppercase">Kart Yapılandırması</h2>
+                <input type="text" id="targetLocation" value="Nilüfer Geri Dönüşüm Merkezi" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-sm text-white">
+                <button onclick="generateNewCard()" class="w-full bg-emerald-600 text-white font-medium py-3 rounded-xl">Etiketi Oluştur</button>
+                <button onclick="saveCardToHistory()" class="w-full bg-slate-800 text-slate-200 font-medium py-2.5 rounded-xl border border-slate-700">Arşive Kaydet</button>
+            </div>
+            <div class="lg:col-span-7 flex justify-center">
+                <div class="bg-white text-slate-900 rounded-xl p-6 shadow-2xl w-full max-w-sm border border-slate-300">
+                    <div class="text-center border-b border-slate-300 pb-3 mb-3">
+                        <h3 class="font-extrabold text-base uppercase">DEPOZİTO İADE SİSTEMİ</h3>
+                        <p class="text-[11px] font-mono text-slate-500 mt-0.5">KART NO: <span id="cardNoDisplay" class="font-bold">DYS-K-2026-9941</span></p>
+                    </div>
+                    <div class="flex justify-center my-3"><div id="qrcode" class="p-2 bg-white border rounded-lg"></div></div>
+                    <div class="text-center mt-3"><div class="barcode-lines rounded-sm"></div><p class="text-[11px] font-mono font-bold mt-1">TRB99887766</p></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: ODA GÖZETİM (Tarayıcı Kamerası ile Tek Dosya) -->
+        <div id="content-room" class="tab-content hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div class="lg:col-span-8 bg-slate-900 border border-cyan-500/40 rounded-3xl p-6 space-y-4">
+                <h2 class="text-base font-black text-white"><i class="fa-solid fa-video text-cyan-400 mr-2"></i> Canlı Oda Gözetim (Tarayıcı Kamerası)</h2>
+                <div class="bg-black rounded-2xl p-2 flex justify-center border border-cyan-500/30 relative overflow-hidden">
+                    <video id="webcamVideo" autoplay playsinline class="w-full max-h-[400px] object-contain rounded-xl"></video>
+                </div>
+            </div>
+            <div class="lg:col-span-4 bg-slate-900 border border-slate-800 rounded-3xl p-6 flex flex-col justify-between">
+                <div>
+                    <h3 class="text-sm font-bold text-white mb-3"><i class="fa-solid fa-brain text-cyan-400 mr-2"></i> Güvenlik Logları</h3>
+                    <div id="securityLogContainer" class="bg-slate-950 border border-slate-800 rounded-xl p-3 h-48 overflow-y-auto font-mono text-[11px] text-slate-400">
+                        [00:00:01] Tarayıcı tabanlı AI güvenlik modülü devrede.
+                    </div>
+                </div>
+                <button onclick="sendTestAlert()" class="w-full bg-cyan-600/20 text-cyan-300 border border-cyan-500/40 py-2.5 rounded-xl text-xs font-semibold">Test Bildirimi</button>
+            </div>
+        </div>
+
+        <!-- TAB 3: ARŞİV -->
+        <div id="content-archive" class="tab-content hidden space-y-4">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
+                <div class="flex justify-between items-center"><h2 class="text-base font-bold text-white">Arşiv</h2><button onclick="exportToExcel()" class="bg-emerald-700 text-white px-3 py-1.5 rounded-xl text-xs">Excel İndir</button></div>
+                <div class="overflow-x-auto"><table class="w-full text-left text-xs"><thead class="bg-slate-950 text-slate-400 border-b border-slate-800"><tr><th class="p-3">Kart No</th><th class="p-3">Hedef</th><th class="p-3">Tarih</th></tr></thead><tbody id="archiveTableBody" class="divide-y divide-slate-800 text-slate-300"><tr><td colspan="3" class="text-center py-4 text-slate-500">Kayıt yok.</td></tr></tbody></table></div>
+            </div>
+        </div>
+
+        <!-- TAB 4: METAVERSE -->
+        <div id="content-metaverse" class="tab-content hidden">
+            <div class="bg-slate-900 border border-cyan-500/40 rounded-3xl p-6 text-center py-12">
+                <h2 class="text-lg font-bold text-white"><i class="fa-solid fa-vr-cardboard text-cyan-400 mr-2"></i> Metaverse Dijital İkiz Aktif</h2>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let cardArchive = [];
+        window.addEventListener('DOMContentLoaded', () => {
+            generateNewCard();
+            loadArchive();
+            initWebcam();
+        });
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => { btn.classList.remove('bg-emerald-600', 'bg-cyan-600', 'text-white'); btn.classList.add('bg-slate-800', 'text-slate-300'); });
+            document.getElementById(`content-${tabName}`).classList.remove('hidden');
+            document.getElementById(`tab-${tabName}`).classList.add(tabName === 'room' ? 'bg-cyan-600 text-white' : 'bg-emerald-600 text-white');
+        }
+
+        function initWebcam() {
+            const video = document.getElementById('webcamVideo');
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(stream => { video.srcObject = stream; })
+                .catch(err => { console.log("Kamera erişim hatası:", err); showToast("Kamera erişimi sağlanamadı."); });
+        }
+
+        function generateNewCard() {
+            const cardNo = `DYS-K-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+            document.getElementById('cardNoDisplay').innerText = cardNo;
+            document.getElementById('qrcode').innerHTML = '';
+            new QRCode(document.getElementById('qrcode'), { text: `DYS|${cardNo}`, width: 100, height: 100 });
+        }
+
+        function saveCardToHistory() {
+            cardArchive.unshift({ cardNo: document.getElementById('cardNoDisplay').innerText, targetLoc: document.getElementById('targetLocation').value, date: new Date().toLocaleString('tr-TR') });
+            localStorage.setItem('dys_archive', JSON.stringify(cardArchive));
+            renderArchive();
+            showToast("Arşive kaydedildi.");
+        }
+
+        function renderArchive() {
+            const tbody = document.getElementById('archiveTableBody');
+            if (cardArchive.length === 0) { tbody.innerHTML = `<tr><td colspan="3" class="text-center py-4 text-slate-500">Kayıt yok.</td></tr>`; return; }
+            tbody.innerHTML = cardArchive.map(i => `<tr class="hover:bg-slate-800/40"><td class="p-3 font-mono text-emerald-400">${i.cardNo}</td><td class="p-3">${i.targetLoc}</td><td class="p-3 font-mono text-slate-500">${i.date}</td></tr>`).join('');
+        }
+
+        function loadArchive() {
+            const saved = localStorage.getItem('dys_archive');
+            if (saved) { cardArchive = JSON.parse(saved); renderArchive(); }
+        }
+
+        function sendTestAlert() {
+            document.getElementById('securityLogContainer').insertAdjacentHTML('afterbegin', `<div class="text-cyan-400 font-bold">[${new Date().toLocaleTimeString('tr-TR')}] GÜVENLİK: Hareket algılandı, bildirim tetiklendi.</div>`);
+            showToast("Test bildirimi işlendi.");
+        }
+
+        function exportToExcel() {
+            if (cardArchive.length === 0) { showToast("Arşiv boş."); return; }
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(cardArchive), "Arsiv");
+            XLSX.writeFile(wb, "DYS_Rapor.xlsx");
+            showToast("Excel indirildi.");
+        }
+
+        function showToast(msg) {
+            const c = document.getElementById('systemToastContainer');
+            const t = document.createElement('div');
+            t.className = `p-3 rounded-xl border border-cyan-500/40 text-cyan-300 bg-slate-900 text-xs shadow-2xl`;
+            t.innerText = msg; c.appendChild(t); setTimeout(() => t.remove(), 3000);
+        }
+
+        function triggerEmergencyStop() { alert('ACİL DURUM KRİZ PROTOKOLÜ TETİKLENDİ!'); }
+    </script>
+</body>
+</html>
