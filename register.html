@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Personel Kayıt - Metal Takip</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #2c3e50; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .register-card { background: white; padding: 30px; border-radius: 8px; width: 360px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .register-card h2 { text-align: center; color: #2c3e50; margin-top: 0; border-bottom: 2px solid #ddd; padding-bottom: 8px; }
+        
+        label { display: block; margin-top: 12px; font-weight: bold; color: #555; font-size: 14px; }
+        input, select { width: 100%; padding: 8px; margin-top: 4px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
+        
+        .btn { background: #27ae60; color: white; border: none; padding: 10px; width: 100%; cursor: pointer; border-radius: 4px; font-size: 15px; margin-top: 20px; font-weight: bold; }
+        .btn:hover { background: #219653; }
+        
+        .login-link { text-align: center; margin-top: 15px; font-size: 13px; }
+        .login-link a { color: #2980b9; text-decoration: none; font-weight: bold; }
+        .login-link a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+    <div class="register-card">
+        <h2>Yeni Personel Kaydı</h2>
+        <form id="registerForm">
+            <label>Ad Soyad:</label>
+            <input type="text" id="regAd" placeholder="Örn: Mehmet Demir" required>
+
+            <label>Sicil / Kullanıcı No:</label>
+            <input type="text" id="regSicil" placeholder="Örn: OP-104" required>
+
+            <label>Vardiya / Bölüm:</label>
+            <select id="regVardiya">
+                <option value="08:00 - 16:00 (1. Vardiya)">08:00 - 16:00 (1. Vardiya)</option>
+                <option value="16:00 - 00:00 (2. Vardiya)">16:00 - 00:00 (2. Vardiya)</option>
+                <option value="00:00 - 08:00 (Gece Vardiyası)">00:00 - 08:00 (Gece Vardiyası)</option>
+            </select>
+
+            <label>Şifre:</label>
+            <input type="password" id="regSifre" placeholder="******" required>
+
+            <button type="submit" class="btn">Kayıt Ol ve Giriş Yap</button>
+        </form>
+
+        <div class="login-link">
+            Zaten hesabınız var mı? <a href="login.html">Giriş Yap</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const yeniKullanici = {
+                ad: document.getElementById('regAd').value,
+                sicil: document.getElementById('regSicil').value,
+                vardiya: document.getElementById('regVardiya').value,
+                sifre: document.getElementById('regSifre').value
+            };
+
+            // Kullanıcı bilgilerini localStorage'a sakla
+            localStorage.setItem('aktif_kullanici', JSON.stringify(yeniKullanici));
+
+            alert("Kayıt başarıyla oluşturuldu! Panele yönlendiriliyorsunuz.");
+            window.location.href = 'panel.html';
+        });
+    </script>
+
+</body>
+</html>
