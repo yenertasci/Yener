@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>İş Emri Barkod Etiketi</title>
+    <!-- Barkod kütüphanesi -->
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f9fa;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        nav { background: #2c3e50; padding: 12px; margin-bottom: 20px; border-radius: 6px; width: 100%; max-width: 450px; box-sizing: border-box; }
+        nav a { color: white; text-decoration: none; margin-right: 15px; font-weight: bold; }
+        nav a:hover { text-decoration: underline; }
+
+        /* Etiket / Fiş Kutusu */
+        .etiket-kutu {
+            background: white;
+            width: 400px;
+            padding: 20px;
+            border-radius: 6px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+
+        .etiket-header {
+            text-align: center;
+            border-bottom: 2px solid #333;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+        }
+
+        .etiket-header h2 { margin: 0; font-size: 18px; color: #2c3e50; }
+        .etiket-header span { font-size: 12px; color: #7f8c8d; }
+
+        .detay-satir {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            font-size: 13px;
+        }
+
+        .detay-satir .baslik { font-weight: bold; color: #555; }
+        .detay-satir .deger { color: #333; }
+
+        .barkod-alan {
+            text-align: center;
+            margin-top: 15px;
+            border-top: 1px dashed #ccc;
+            padding-top: 15px;
+        }
+
+        .btn-yazdir {
+            display: block;
+            width: 100%;
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            padding: 10px;
+            font-size: 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        .btn-yazdir:hover { background-color: #219653; }
+
+        /* Sadece yazdırma anında çalışacak stiller */
+        @media print {
+            body { background: white; padding: 0; }
+            nav, .btn-yazdir { display: none; }
+            .etiket-kutu { box-shadow: none; border: none; width: 100%; padding: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Üst Menü -->
+    <nav>
+        <a href="panel.html">Ana Panel</a>
+        <a href="etiket.html" style="color: #f1c40f;">Etiket</a>
+        <a href="stok-takip.html">Stok Takip</a>
+    </nav>
+
+    <div class="etiket-kutu">
+        <div class="etiket-header">
+            <h2>METAL İŞ EMRİ ETİKETİ</h2>
+            <span>Lazer / Pres Kesim Takip</span>
+        </div>
+
+        <div class="detaylar">
+            <div class="detay-satir">
+                <span class="baslik">İş Emri No:</span>
+                <span class="deger" id="lblNo">IE-2026-9921</span>
+            </div>
+            <div class="detay-satir">
+                <span class="baslik">Müşteri / Proje:</span>
+                <span class="deger" id="lblMusteri">Örnek Makine San.</span>
+            </div>
+            <div class="detay-satir">
+                <span class="baslik">Malzeme:</span>
+                <span class="deger" id="lblMalzeme">3mm DKP Sac (ST37)</span>
+            </div>
+            <div class="detay-satir">
+                <span class="baslik">Kesim Ölçüsü:</span>
+                <span class="deger" id="lblKesim">500x1200 mm (2 Adet)</span>
+            </div>
+        </div>
+
+        <div class="barkod-alan">
+            <svg id="barkodCizgi"></svg>
+        </div>
+
+        <button class="btn-yazdir" onclick="window.print()">Etiketi Yazdır</button>
+    </div>
+
+    <script>
+        // URL'den dinamik veri alma (Örn: etiket.html?no=IE-123&musteri=ABC...)
+        const urlParams = new URLSearchParams(window.location.search);
+        const isEmriNo = urlParams.get('no') || "IE-2026-9921";
+        const musteriAdi = urlParams.get('musteri') || "Örnek Makine San.";
+        const malzemeCinsi = urlParams.get('malzeme') || "3mm DKP Sac (ST37)";
+        const kesimOlcusu = urlParams.get('kesim') || "500x1200 mm (2 Adet)";
+
+        // Alanları güncelle
+        document.getElementById('lblNo').innerText = isEmriNo;
+        document.getElementById('lblMusteri').innerText = musteriAdi;
+        document.getElementById('lblMalzeme').innerText = malzemeCinsi;
+        document.getElementById('lblKesim').innerText = kesimOlcusu;
+
+        // Barkodu oluştur
+        JsBarcode("#barkodCizgi", isEmriNo, {
+            format: "CODE128",
+            width: 1.5,
+            height: 50,
+            displayValue: true,
+            fontSize: 12
+        });
+    </script>
+
+</body>
+</html>
