@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Raporlar ve Analiz - Metal Takip</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f4f7f6; }
+        nav { background: #2c3e50; padding: 12px; margin-bottom: 20px; border-radius: 6px; }
+        nav a { color: white; text-decoration: none; margin-right: 15px; font-weight: bold; }
+        nav a:hover { text-decoration: underline; }
+        
+        .card-container { display: flex; gap: 20px; margin-bottom: 20px; }
+        .stat-card { background: white; padding: 20px; border-radius: 8px; flex: 1; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center; }
+        .stat-card h3 { margin: 0; color: #7f8c8d; font-size: 14px; }
+        .stat-card p { font-size: 24px; font-weight: bold; color: #2c3e50; margin: 10px 0 0; }
+        
+        .table-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; font-size: 14px; }
+        th { background: #34495e; color: white; }
+    </style>
+</head>
+<body>
+
+    <!-- Ortak Üst Menü -->
+    <nav>
+        <a href="panel.html">Ana Panel</a>
+        <a href="yeni-is-emri.html">Yeni İş Emri</a>
+        <a href="uretim.html">Üretim</a>
+        <a href="stok-takip.html">Stok Takip</a>
+        <a href="raporlar.html" style="color: #f1c40f;">Raporlar</a>
+        <a href="ayarlar.html">Ayarlar</a>
+        <a href="login.html" style="float: right;">Çıkış</a>
+    </nav>
+
+    <h2>Üretim ve İstatistik Raporları</h2>
+
+    <!-- Özet Kartları -->
+    <div class="card-container">
+        <div class="stat-card">
+            <h3>Toplam İş Emri</h3>
+            <p id="toplamIsEmri">0</p>
+        </div>
+        <div class="stat-card">
+            <h3>Kesilen Toplam Adet</h3>
+            <p id="toplamAdet">0</p>
+        </div>
+        <div class="stat-card">
+            <h3>Kritik Stok Kalemi</h3>
+            <p style="color: #e74c3c;">2</p>
+        </div>
+    </div>
+
+    <!-- Son İşlemler Tablosu -->
+    <div class="table-card">
+        <h3>Son Gerçekleşen Üretimler</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>İş Emri No</th>
+                    <th>Müşteri / Proje</th>
+                    <th>Kesim Ölçüsü</th>
+                    <th>Adet</th>
+                    <th>Durum</th>
+                </tr>
+            </thead>
+            <tbody id="raporTablo">
+                <!-- JavaScript ile doldurulacak -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // LocalStorage'dan kayıtlı iş emirlerini çek ve raporla
+        const kayitliIsler = JSON.parse(localStorage.getItem('metal_is_emirleri')) || [];
+        
+        document.getElementById('toplamIsEmri').innerText = kayitliIsler.length;
+
+        let toplamAdetSayisi = kayitliIsler.reduce((toplam, item) => toplam + Number(item.adet || 0), 0);
+        document.getElementById('toplamAdet').innerText = toplamAdetSayisi;
+
+        const tabloGgovde = document.getElementById('raporTablo');
+        if(kayitliIsler.length === 0) {
+            tabloGgovde.innerHTML = '<tr><td colspan="5" style="text-align:center; color:#7f8c8d;">Henüz raporlanacak veri bulunmuyor.</td></tr>';
+        } else {
+            kayitliIsler.forEach(item => {
+                let tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${item.no}</strong></td>
+                    <td>${item.musteri}</td>
+                    <td>${item.kesim}</td>
+                    <td>${item.adet} Adet</td>
+                    <td><span style="color: #27ae60; font-weight:bold;">Tamamlandı</span></td>
+                `;
+                tabloGgovde.appendChild(tr);
+            });
+        }
+    </script>
+
+</body>
+</html>
