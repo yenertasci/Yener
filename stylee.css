@@ -1,0 +1,18 @@
+.profile-preview {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.profile-preview img {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid;
+  border-color: var(--primary-green);
+}
+
+audio {
+  width: 100%;
+  margin-top: 5px;
+}
