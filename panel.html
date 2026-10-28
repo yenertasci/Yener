@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="tr" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DYS - Gelişmiş Depozito ve Atık Takip Yönetim Sistemi (Tam Sürüm)</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            900: '#064e3b',
+                            950: '#022c22'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- QR Code Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- HTML5 QR Code Scanner -->
+    <script src="https://unpkg.com/html5-qrcode"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .font-mono { font-family: 'JetBrains+Mono', monospace; }
+        
+        @media print {
+            body * { visibility: hidden; }
+            #printArea, #printArea * { visibility: visible; }
+            #printArea {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                display: flex;
+                justify-content: center;
+                padding: 0;
+                margin: 0;
+            }
+            .no-print { display: none !important; }
+        }
+
+        .barcode-lines {
+            background: repeating-linear-gradient(
+                90deg,
+                #000,
+                #000 2px,
+                #fff 2px,
+                #fff 4px,
+                #000 4px,
+                #000 7px,
+                #fff 7px,
+                #fff 9px
+            );
+            height: 48px;
+            width: 100%;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased">
+
+    <!-- Top Navigation Bar -->
+    <header class="bg-slate-900/90 border-b border-slate-800 sticky top-0 z-50 backdrop-blur-xl">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-lg shadow-emerald-500/10">
+                    <i class="fa-solid fa-recycle text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-base md:text-lg text-white leading-tight flex items-center space-x-2">
+                        <span>DYS Entegre Yönetim Paneli</span>
+                        <span class="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full">PRO v3.4</span>
+                    </h1>
+                    <p class="text-xs text-slate-400">Endüstriyel Saha Etiketleme, Takip & Depozito Matrisi</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-3">
+                <div class="hidden sm:flex items-center space-x-2 bg-slate-950/60 border border-slate-800 px-3 py-1.5 rounded-xl text-xs text-slate-300">
+                    <i class="fa-solid fa-server text-emerald-400"></i>
+                    <span>Yerel Bellek (IndexedDB/Local) Aktif</span>
+                </div>
+                <button onclick="exportSystemData()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 p-2.5 rounded-xl text-xs font-medium transition-colors border border-slate-700 flex items-center space-x-1.5" title="Sistem Verilerini Yedekle">
+                    <i class="fa-solid fa-download text-emerald-400"></i>
+                    <span class="hidden md:inline">Yedekle</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sub Navigation Tabs -->
+    <nav class="bg-slate-900/50 border-b border-slate-800/80 backdrop-blur">
+        <div class="max-w-7xl mx-auto px-4 flex space-x-2 overflow-x-auto py-2">
+            <button onclick="switchTab('generator')" id="tab-generator" class="tab-btn px-4 py-2 rounded-xl text-xs font-semibold bg-emerald-600 text-white shadow-md shadow-emerald-600/20 flex items-center space-x-2 transition-all whitespace-nowrap">
+                <i class="fa-solid fa-id-card"></i>
+                <span>Kart & Etiket Üreticisi</span>
+            </button>
+            <button onclick="switchTab('scanner')" id="tab-scanner" class="tab-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800/80 text-slate-300 hover:bg-slate-800 hover:text-white flex items-center space-x-2 transition-all whitespace-nowrap">
+                <i class="fa-solid fa-camera"></i>
+                <span>Saha QR & Barkod Tarayıcı</span>
+            </button>
+            <button onclick="switchTab('archive')" id="tab-archive" class="tab-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800/80 text-slate-300 hover:bg-slate-800 hover:text-white flex items-center space-x-2 transition-all whitespace-nowrap">
+                <i class="fa-solid fa-boxes-stacked"></i>
+                <span>Arşiv & Log Kayıtları</span>
+            </button>
+            <button onclick="switchTab('analytics')" id="tab-analytics" class="tab-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800/80 text-slate-300 hover:bg-slate-800 hover:text-white flex items-center space-x-2 transition-all whitespace-nowrap">
+                <i class="fa-solid fa-chart-pie"></i>
+                <span>Raporlar & İstatistikler</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Workspace -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 py-6">
+
+        <!-- TAB 1: KART & ETİKET ÜRETİCİSİ -->
+        <div id="content-generator" class="tab-content grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- Sol Form Paneli -->
+            <div class="lg:col-span-5 space-y-6">
+                <div class="bg-slate-900 border border-slate-800/80 rounded-2xl p-5 shadow-2xl space-y-4">
+                    <h2 class="text-sm font-semibold text-white uppercase tracking-wider flex items-center">
+                        <i class="fa-solid fa-sliders text-emerald-400 mr-2"></i>
+                        Parametrik Kart Yapılandırması
+                    </h2>
+
+                    <div class="space-y-3.5">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400 mb-1">Varış Noktası / Hedef Tesis</label>
+                            <input type="text" id="targetLocation" value="Nilüfer Geri Dönüşüm Merkezi" 
+                                class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500 transition-colors">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-400 mb-1">Atık / Malzeme Sınıfı</label>
+                                <select id="wasteTypeSelect" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500">
+                                    <option value="PET / CAM ŞİŞE (KARIŞIK)">PET / Cam Şişe</option>
+                                    <option value="PLASTİK AMBALAJ (HDPE)">Plastik (HDPE)</option>
+                                    <option value="KAĞIT / KARTON AMBALAJ">Kağıt / Karton</option>
+                                    <option value="ALÜMİNYUM / METAL KUTU">Alüminyum / Metal</option>
+                                    <option value="ELEKTRONİK & TEHLİKELİ">Elektronik Atık</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-400 mb-1">Çıkış / Yükleme Bölgesi</label>
+                                <input type="text" id="originLocation" value="Bursa OSB" 
+                                    class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-400 mb-1">Miktar / Palet Bilgisi</label>
+                                <input type="text" id="itemQuantity" value="25 Adet / 14.2 kg" 
+                                    class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-400 mb-1">Özel Seri No (Opsiyonel)</label>
+                                <input type="text" id="customSerial" placeholder="Otomatik Üretilir" 
+                                    class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-sm text-white font-mono focus:outline-none focus:border-emerald-500">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400 mb-1">Sorumlu Operatör / Personel</label>
+                            <input type="text" id="operatorName" value="Saha Sorumlusu #42" 
+                                class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500">
+                        </div>
+
+                        <div class="pt-2 flex space-x-2">
+                            <button onclick="generateNewCard()" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-3 rounded-xl transition-colors shadow-lg shadow-emerald-600/20 flex items-center justify-center space-x-2">
+                                <i class="fa-solid fa-barcode"></i>
+                               <span>Etiketi Oluştur & Güncelle</span>
+                            </button>
+                            <button onclick="saveCardToHistory()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-3 rounded-xl font-medium transition-colors border border-slate-700" title="Arşive Kaydet">
+                                <i class="fa-solid fa-floppy-disk text-emerald-400"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hızlı İpuçları Paneli -->
+                <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 shadow-xl space-y-2">
+                    <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center">
+                        <i class="fa-solid fa-circle-info text-emerald-400 mr-2"></i>
+                        Saha Operasyon Kılavuzu
+                    </h3>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Üretilen her kart üzerindeki özgün QR kod, tarayıcı veya mobil cihazlar ile okutulduğunda hedef tesise anlık yönlendirme verisi sağlar. Yazdır butonunu kullanarak doğrudan etiket yazıcısına çıktı gönderebilirsiniz.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Sağ Baskı & Önizleme Paneli -->
+            <div class="lg:col-span-7 flex flex-col items-center justify-start space-y-4">
+                
+                <div class="w-full flex items-center justify-between no-print px-1">
+                    <span class="text-xs font-medium text-slate-400">Fiziksel Etiket / Kart Önizlemesi</span>
+                    <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-xl text-xs font-semibold shadow-lg shadow-indigo-600/20 flex items-center space-x-2 transition-colors">
+                        <i class="fa-solid fa-print"></i>
+                        <span>Kartı / Etiketi Yazdır</span>
+                    </button>
+                </div>
+
+                <!-- KART ŞABLONU -->
+                <div id="printArea" class="w-full flex justify-center">
+                    <div class="bg-white text-slate-900 rounded-xl p-6 shadow-2xl w-full max-w-sm border border-slate-300 font-sans tracking-tight relative">
+                        
+                        <!-- Header -->
+                        <div class="text-center border-b border-slate-300 pb-3 mb-3">
+                            <h3 class="font-extrabold text-base text-slate-900 uppercase tracking-wider">DEPOZİTO İADE SİSTEMİ</h3>
+                            <p class="text-xs font-bold text-slate-600 uppercase">YÖNLENDİRME VE ATIK KARTI</p>
+                            <p class="text-[11px] font-mono text-slate-500 mt-0.5">KART NO: <span id="cardNoDisplay" class="font-bold text-slate-800">DYS-K-2026-00412</span></p>
+                        </div>
+
+                        <!-- Details Grid -->
+                        <div class="grid grid-cols-3 gap-2 text-center border-b border-slate-300 pb-3 mb-3 text-[11px]">
+                            <div class="px-1">
+                                <span class="block text-[9px] font-bold text-slate-500 uppercase">SERİ NO:</span>
+                                <span id="serialDisplay" class="font-mono font-bold text-slate-800 break-all">TR-B-99887766</span>
+                            </div>
+                            <div class="px-1 border-x border-slate-200">
+                                <span class="block text-[9px] font-bold text-slate-500 uppercase">GİDECEĞİ YER:</span>
+                                <span id="targetDisplay" class="font-bold text-slate-900 leading-tight block">NİLÜFER GERİ DÖNÜŞÜM MERKEZİ</span>
+                            </div>
+                            <div class="px-1">
+                                <span class="block text-[9px] font-bold text-slate-500 uppercase">ATIK TÜRÜ:</span>
+                                <span id="typeDisplay" class="font-bold text-slate-800 leading-tight block">PET / CAM ŞİŞE (KARIŞIK)</span>
+                            </div>
+                        </div>
+
+                        <!-- QR Code Container -->
+                        <div class="flex justify-center my-3">
+                            <div id="qrcode" class="p-2 bg-white border border-slate-200 rounded-lg shadow-sm"></div>
+                        </div>
+
+                        <!-- Barcode Simulation -->
+                        <div class="text-center mt-3">
+                            <div class="barcode-lines rounded-sm"></div>
+                            <p class="text-[11px] font-mono font-bold text-slate-800 mt-1">
+                                BARKOD NO: <span id="barcodeNoDisplay">TRB99887766</span>
+                            </p>
+                        </div>
+
+                        <!-- Footer Meta -->
+                        <div class="border-t border-slate-300 mt-3 pt-2 text-center text-[10px] text-slate-600 space-y-0.5">
+                            <p><strong class="text-slate-800">MİKTAR:</strong> <span id="quantityDisplay" class="font-bold text-slate-800">25 Adet / 14.2 kg</span></p>
+                            <p><strong class="text-slate-800">DURUM:</strong> <span class="text-emerald-700 font-bold uppercase">AKTİF / SEVK EDİLEBİLİR</span></p>
+                            <p><strong class="text-slate-800">TARİH:</strong> <span id="dateDisplay">28.10.2026</span> | <strong class="text-slate-800">OPERATÖR:</strong> <span id="operatorDisplay">#42</span></p>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- TAB 2: SAHA TARAYICI -->
+        <div id="content-scanner" class="tab-content hidden max-w-2xl mx-auto space-y-6">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                    <div>
+                        <h2 class="text-base font-bold text-white flex items-center">
+                            <i class="fa-solid fa-camera-rotate text-emerald-400 mr-2"></i>
+                            Kamera Tabanlı Kart Okuma ve Doğrulama
+                        </h2>
+                        <p class="text-xs text-slate-400 mt-0.5">Saha çıkışlarında veya teslim noktalarında etiketleri doğrulayın.</p>
+                    </div>
+                </div>
+
+                <div id="reader" class="overflow-hidden rounded-2xl border border-slate-800 bg-black min-h-[260px] flex items-center justify-center text-xs text-slate-500 shadow-inner">
+                    Kamera Beklemede
+                </div>
+
+                <div class="flex space-x-3">
+                    <button onclick="startScanner()" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-xl text-xs font-semibold shadow-lg shadow-emerald-600/20 flex items-center justify-center space-x-2 transition-colors">
+                        <i class="fa-solid fa-play"></i>
+                        <span>Kamerayı Başlat</span>
+                    </button>
+                    <button onclick="stopScanner()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-5 py-3 rounded-xl text-xs font-semibold transition-colors">
+                        Durdur
+                    </button>
+                </div>
+
+                <div id="scanResult" class="hidden p-4 bg-emerald-950/40 border border-emerald-500/30 rounded-xl text-xs text-emerald-300 font-mono space-y-1"></div>
+            </div>
+        </div>
+
+        <!-- TAB 3: ARŞİV VE LOG KAYITLARI -->
+        <div id="content-archive" class="tab-content hidden space-y-6">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                    <div>
+                        <h2 class="text-base font-bold text-white flex items-center">
+                            <i class="fa-solid fa-box-archive text-emerald-400 mr-2"></i>
+                            Sistem Arşivi ve Geçmiş Kart Logları
+                        </h2>
+                        <p class="text-xs text-slate-400 mt-0.5">Daha önce oluşturulmuş ve sisteme kaydedilmiş tüm etiket kayıtları.</p>
+                    </div>
+                    <button onclick="clearArchive()" class="bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 px-3 py-1.5 rounded-xl text-xs font-medium transition-colors">
+                        Arşivi Sıfırla
+                    </button>
+                </div>
+
+                <div id="archiveTableContainer" class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-slate-950 text-slate-400 uppercase font-semibold border-b border-slate-800">
+                            <tr>
+                                <th class="p-3">Kart No</th>
+                                <th class="p-3">Seri No</th>
+                                <th class="p-3">Varış Noktası</th>
+                                <th class="p-3">Atık Türü</th>
+                                <th class="p-3">Miktar</th>
+                                <th class="p-3">Tarih</th>
+                                <th class="p-3 text-right">İşlem</th>
+                            </tr>
+                        </thead>
+                        <tbody id="archiveTableBody" class="divide-y divide-slate-800/60 text-slate-300">
+                            <tr>
+                                <td colspan="7" class="text-center py-8 text-slate-500">Kayıtlı arşiv verisi bulunmuyor.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: RAPORLAR VE İSTATİSTİKLER -->
+        <div id="content-analytics" class="tab-content hidden space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-xl">
+                    <span class="text-xs text-slate-400 font-medium">Toplam Üretilen Kart</span>
+                    <h3 id="statTotalCards" class="text-2xl font-bold text-white mt-1">0</h3>
+                </div>
+                <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-xl">
+                    <span class="text-xs text-slate-400 font-medium">Aktif Sevkiyat Hedefleri</span>
+                    <h3 id="statTotalTargets" class="text-2xl font-bold text-emerald-400 mt-1">1</h3>
+                </div>
+                <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-xl">
+                    <span class="text-xs text-slate-400 font-medium">Sistem Durumu</span>
+                    <h3 class="text-2xl font-bold text-indigo-400 mt-1">Stabil</h3>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Script Engine -->
+    <script>
+        let qrcodeObj = null;
+        let html5QrcodeScanner = null;
+        let cardArchive = [];
+
+        window.addEventListener('load', () => {
+            generateNewCard();
+            loadArchiveFromStorage();
+            updateAnalytics();
+        });
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-emerald-600', 'text-white', 'shadow-md', 'shadow-emerald-600/20');
+                btn.classList.add('bg-slate-800/80', 'text-slate-300');
+            });
+
+            document.getElementById(`content-${tabId}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`tab-${tabId}`);
+            activeBtn.classList.remove('bg-slate-800/80', 'text-slate-300');
+            activeBtn.classList.add('bg-emerald-600', 'text-white', 'shadow-md', 'shadow-emerald-600/20');
+        }
+
+        function generateNewCard() {
+            const target = document.getElementById('targetLocation').value.toUpperCase() || 'NİLÜFER GERİ DÖNÜŞÜM MERKEZİ';
+            const wasteType = document.getElementById('wasteTypeSelect').value;
+            const origin = document.getElementById('originLocation').value.toUpperCase() || 'BURSA OSB';
+            const quantity = document.getElementById('itemQuantity').value || '1 Adet';
+            const operator = document.getElementById('operatorName').value || '#42';
+            let customSerial = document.getElementById('customSerial').value.trim();
+
+            if (!customSerial) {
+                const randomNum = Math.floor(10000000 + Math.random() * 90000000);
+                customSerial = `TR-B-${randomNum}`;
+            }
+
+            const rawBarcode = customSerial.replace(/[^A-Z0-9]/g, '');
+            const cardNo = `DYS-K-2026-${Math.floor(100 + Math.random() * 900)}`;
+            const today = new Date().toLocaleDateString('tr-TR');
+
+            document.getElementById('cardNoDisplay').innerText = cardNo;
+            document.getElementById('serialDisplay').innerText = customSerial;
+            document.getElementById('targetDisplay').innerText = target;
+            document.getElementById('typeDisplay').innerText = wasteType;
+            document.getElementById('barcodeNoDisplay').innerText = rawBarcode;
+            document.getElementById('quantityDisplay').innerText = quantity;
+            document.getElementById('dateDisplay').innerText = today;
+            document.getElementById('operatorDisplay').innerText = operator;
+
+            const qrContainer = document.getElementById('qrcode');
+            qrContainer.innerHTML = '';
+
+            const qrPayload = JSON.stringify({
+                cardNo: cardNo,
+                serial: customSerial,
+                target: target,
+                type: wasteType,
+                quantity: quantity,
+                date: today,
+                operator: operator
+            });
+
+            qrcodeObj = new QRCode(qrContainer, {
+                text: qrPayload,
+                width: 120,
+                height: 120,
+                colorDark : "#0f172a",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+        }
+
+        function saveCardToHistory() {
+            const currentCard = {
+                cardNo: document.getElementById('cardNoDisplay').innerText,
+                serial: document.getElementById('serialDisplay').innerText,
+                target: document.getElementById('targetDisplay').innerText,
+                type: document.getElementById('typeDisplay').innerText,
+                quantity: document.getElementById('quantityDisplay').innerText,
+                date: document.getElementById('dateDisplay').innerText
+            };
+
+            cardArchive.unshift(currentCard);
+            if (cardArchive.length > 50) cardArchive.pop();
+            
+            localStorage.setItem('dys_full_archive', JSON.stringify(cardArchive));
+            renderArchiveTable();
+            updateAnalytics();
+            alert("Kart başarıyla sisteme ve arşive kaydedildi!");
+        }
+
+        function loadArchiveFromStorage() {
+            const saved = localStorage.getItem('dys_full_archive');
+            if (saved) {
+                try {
+                    cardArchive = JSON.parse(saved);
+                    renderArchiveTable();
+                } catch (e) {
+                    cardArchive = [];
+                }
+            }
+        }
+
+        function renderArchiveTable() {
+            const tbody = document.getElementById('archiveTableBody');
+            if (cardArchive.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center py-8 text-slate-500">Kayıtlı arşiv verisi bulunmuyor.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = cardArchive.map((item, idx) => `
+                <tr class="hover:bg-slate-800/40 transition-colors">
+                    <td class="p-3 font-mono text-emerald-400 font-bold">${item.cardNo}</td>
+                    <td class="p-3 font-mono">${item.serial}</td>
+                    <td class="p-3">${item.target}</td>
+                    <td class="p-3">${item.type}</td>
+                    <td class="p-3">${item.quantity}</td>
+                    <td class="p-3 text-slate-400">${item.date}</td>
+                    <td class="p-3 text-right">
+                        <button onclick="removeArchiveItem(${idx})" class="text-rose-400 hover:text-rose-300 p-1"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function removeArchiveItem(index) {
+            cardArchive.splice(index, 1);
+            localStorage.setItem('dys_full_archive', JSON.stringify(cardArchive));
+            renderArchiveTable();
+            updateAnalytics();
+        }
+
+        function clearArchive() {
+            if (confirm("Tüm arşiv loglarını silmek istediğinize emin misiniz?")) {
+                cardArchive = [];
+                localStorage.removeItem('dys_full_archive');
+                renderArchiveTable();
+                updateAnalytics();
+            }
+        }
+
+        function updateAnalytics() {
+            document.getElementById('statTotalCards').innerText = cardArchive.length;
+        }
+
+        function exportSystemData() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(cardArchive, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", "dys_system_backup.json");
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        function startScanner() {
+            const resultDiv = document.getElementById('scanResult');
+            resultDiv.classList.add('hidden');
+
+            if (!html5QrcodeScanner) {
+                html5QrcodeScanner = new Html5Qrcode("reader");
+            }
+
+            html5QrcodeScanner.start(
+                { facingMode: "environment" },
+                { fps: 10, qrbox: { width: 160, height: 160 } },
+                (decodedText) => {
+                    resultDiv.classList.remove('hidden');
+                    try {
+                        const parsed = JSON.parse(decodedText);
+                        resultDiv.innerHTML = `<strong><i class="fa-solid fa-check-circle"></i> Doğrulama Başarılı:</strong><br>
+                        Kart No: ${parsed.cardNo || '-'}<br>
+                        Seri: ${parsed.serial || '-'}<br>
+                        Hedef: ${parsed.target || '-'}<br>
+                        Tür: ${parsed.type || '-'}<br>
+                        Miktar: ${parsed.quantity || '-'}`;
+                    } catch (e) {
+                        resultDiv.innerHTML = `<strong>Ham Veri Okundu:</strong> ${decodedText}`;
+                    }
+                    stopScanner();
+                },
+                () => {}
+            ).catch(err => {
+                alert("Kamera erişimi sağlanamadı.");
+            });
+        }
+
+        function stopScanner() {
+            if (html5QrcodeScanner) {
+                html5QrcodeScanner.stop().then(() => {
+                    document.getElementById('reader').innerText = "Kamera Beklemede";
+                }).catch(() => {});
+            }
+        }
+    </script>
+</body>
+</html>
