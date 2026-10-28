@@ -1,0 +1,17 @@
+async function robotHattinaGonder(isEmriData) {
+    try {
+        // Fabrika içindeki yerel bir API sunucusuna istek atma
+        let response = await fetch('http://192.168.1.50:5000/api/robot-gorev', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(isEmriData)
+        });
+        
+        let sonuc = await response.json();
+        if(sonuc.basarili) {
+            console.log("İş emri başarıyla robota iletildi!");
+        }
+    } catch (hata) {
+        console.log("Robot bağlantısı kurulamadı, iş emri yerel kuyrukta bekletiliyor.");
+    }
+}
